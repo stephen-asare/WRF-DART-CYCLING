@@ -11,7 +11,7 @@ source "$paramfile"
 WORK_DIR=${ENS_WRF_DIR}
 if [[ ! -d $WORK_DIR ]]; then mkdir -p $WORK_DIR; fi
 cd $WORK_DIR
-NUM_MEMBERS=2 # DEBUG
+# NUM_MEMBERS=2 # DEBUG
 MEM=1
 
 DATE=$INITIAL_DATE
