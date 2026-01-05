@@ -33,7 +33,6 @@ BE_DIR=$RUN_DIR/input/be
 REAL_FC_ERA_DIR=$RUN_DIR/input
 
 ## Directories for Peturbed Ensemble Members
-ENS_DIR=${RUN_DIR}/ens
 
 
 
@@ -45,6 +44,7 @@ WPS_INPUT_DIR=$RUN_DIR/input/wps_input
 # output data durectory:
 ############################################################
 EXP_DIR=$RUN_DIR/osse_out
+ENS_DIR=${EXP_DIR}/ens
 
 #wps & real
 # WPS_RUN_DIR=$EXP_DIR/wps_fc

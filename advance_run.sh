@@ -5,8 +5,7 @@
 #SBATCH -t 00:20:00
 #SBATCH --partition=backfill2
 #SBATCH -C "intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
-#SBATCH --output=gen_retro_icbc.%j.log # Standard output and error log exclusive
-#SBATCH --export=AL
+#SBATCH --export=ALL
 #-----------------------------------------------------------------------------------------------------------
 # This script advances the simulation in time taking in the start and end date to advance and calls wrf.exe
 # Usage:
@@ -14,11 +13,10 @@
 # Example:
 #   ./advance_run.sh 2015071412 2015071512
 #-----------------------------------------------------------------------------------------------------------
-ml intel/21
-ml openmpi/4.1.0
-ml python/3
 
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/param.sh"   # set this appropriately #%%%#
+source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
+
+paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"   # set this appropriately #%%%#
 source "$paramfile"
 
 start_date=$1
@@ -33,7 +31,7 @@ mm_e=$(echo "$end_date" | cut -c 5-6)
 dd_e=$(echo "$end_date" | cut -c 7-8)
 hh_e=$(echo "$end_date" | cut -c 9-10)
 
-ln -sf $WRF_DIR/* .
+ln -sf $WRF_DIR/run/* .
 rm -rf namelist.input
 
 cat > namelist.input << EOF
@@ -55,7 +53,7 @@ cat > namelist.input << EOF
  end_minute                          = 00,00, 
  end_second                          = 00,00,  
  interval_seconds                    = ${LBC_FREQ_SECOND},
- input_from_file                     = .true.,.true.,
+ input_from_file                     = .true.,.false.,
  history_interval                    = ${OUTPUT_INTERVAL},${OUTPUT_INTERVAL}, 
  frames_per_outfile                  = 1,1,
  restart                             = .false.,
@@ -157,7 +155,9 @@ cat > namelist.input << EOF
  /
 EOF
 
-srun -n 15 ./wrf.exe
+echo "Starting WRF at $(date)"
 
-exit 0
+echo "Running WRF..."
+srun ./wrf.exe
+
 
