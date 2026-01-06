@@ -2,7 +2,7 @@
 #SBATCH --job-name="gen_icbc"
 #SBATCH --ntasks=15
 #SBATCH -A backfill2
-#SBATCH -t 00:20:00
+#SBATCH -t 01:40:00
 #SBATCH --partition=backfill2
 #SBATCH -C "intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 #SBATCH --export=ALL
@@ -158,6 +158,8 @@ EOF
 echo "Starting WRF at $(date)"
 
 echo "Running WRF..."
+ulimit -s unlimited
+
 srun ./wrf.exe
 
 
