@@ -1,7 +1,7 @@
 #!/bin/ksh
 #-----------------------------------------------------
 ulimit -s unlimited
-export NUM_MEMBERS=40
+export NUM_MEMBERS=30
 
 export RUN_WRFVAR=true            
 export RUN_UPDATE_BC=false        
