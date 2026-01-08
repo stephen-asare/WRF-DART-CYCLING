@@ -33,7 +33,7 @@ hh_e=$(echo "$end_date" | cut -c 9-10)
 
 ln -sf $WRF_DIR/run/* .
 rm -rf namelist.input
-
+DE_FCST_RANGE=12
 cat > namelist.input << EOF
  &time_control
  run_days                            = 0,

@@ -65,7 +65,7 @@ fcst = {
 
   field = {
    name  = "REFL_10CM";   // 2-D composite reflectivity in dBZ
-   level = "(19,0,*,*)"; 
+   level = "(0,0,*,*)"; 
   }
 
   censor_thresh      = [ <0 ];
