@@ -1,0 +1,37 @@
+
+model  = [];
+desc   = [];
+obtype = [];
+
+merge_flag  = NONE;
+match_flag  = MERGE_BOTH;
+
+mask_grid = [];
+mask_poly = [];
+
+// Columns for -summary / -bycase output
+summary = [
+  {
+    name = "PAIR";
+    // Some v12 builds insist on 'columns'
+    column = [
+      "OBJECT_ID",
+      "FCST_ID",
+      "OBS_ID",
+      "INTEREST",
+      "RAW_INTEREST",
+      "CENTROID_DIST",
+      "AXIS_ANGLE_DIFF",
+      "BOUNDARY_DIST",
+      "AREA_RATIO",
+      "FCST_AREA",
+      "OBS_AREA",
+      "FCST_INTENSITY_50",
+      "OBS_INTENSITY_50",
+      "FCST_INTENSITY_90",
+      "OBS_INTENSITY_90",
+      "TIME_DIFF"
+    ];
+  }
+];
+
