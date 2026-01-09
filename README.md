@@ -15,4 +15,7 @@ Edit the paramenter file to meet device and scheduler requirements, along with d
 ```
 ### Generate Perturbed Ensembles
 Using the produced IC and BC file for the initial date of the experiment, I will use randomcv from WRFDA to produced 40 randomly perturbed ensembles. 
+```
+./gen_ens.sh
+```
 
