@@ -6,7 +6,7 @@ The project makes use of the 4th generation atmospheric reanalyses produced by t
 
 
 ### Prepare experiment directory
-You may need approximately 5TB of space to run the full scale project. If you have limited space, best practices will be to reduce the ensemble memebrs together with removing temprory files after each run.
+You may need approximately 5TB of space to run the full scale project. If you have limited space, best practices will be to reduce the ensemble members together with removing temprory files after each run.
 
 #### Configure the param file and generate boundary conditions
 Edit the paramenter file to meet device and scheduler requirements, along with directory paths the run `gen_icbc.sh` to generate **IC** and **BC** files. 
