@@ -18,4 +18,8 @@ Using the produced IC and BC file for the initial date of the experiment, I will
 ```
 ./gen_ens.sh
 ```
+### Select Nature run
+
+### Generate synthetic observations
+
 
