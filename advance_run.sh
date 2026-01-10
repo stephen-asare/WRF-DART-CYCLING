@@ -2,7 +2,6 @@
 #SBATCH --job-name="gen_icbc"
 #SBATCH --ntasks=15
 #SBATCH -A backfill2
-#SBATCH -t 01:40:00
 #SBATCH --partition=backfill2
 #SBATCH -C "intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 #SBATCH --export=ALL

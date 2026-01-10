@@ -32,7 +32,7 @@ export NHOUR=15
 export NUM_MEMBERS=30
 
 # Start hour
-HOUR=10
+HOUR=0
 while [[ ${HOUR} -le ${NHOUR} ]]; do
   # Compute valid time
   VAL_DATE="$("${BUILD_DIR}/da_advance_time.exe" "${INITIAL_DATE}" "${HOUR}" 2>/dev/null)"

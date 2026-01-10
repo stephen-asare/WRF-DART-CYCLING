@@ -54,6 +54,7 @@ ICBC_DIR=$EXP_DIR/icbc
 WPS_ENS_DIR=$EXP_DIR/wps_ens
 ENS_FCST_DIR=$EXP_DIR/ens_fcst
 NATURE_DIR=$EXP_DIR/nature_run
+SYS_OBS_DIR=$EXP_DIR/sys_obs
 
 # wrf-related
 ENS_WRF_DIR=$EXP_DIR/ens_wrf
