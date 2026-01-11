@@ -16,7 +16,7 @@ echo "Running gen_obs.sh"
 start_date=201507141200
 end_date=201507150000
 OBS_DIR=/gpfs/research/scratch/sa24m/tqprof/run1/prepbufr
-# CYCLE_PERIOD=60  # in hrs
+CYCLE_PERIOD=3  # in hrs
 while [ "$start_date" -le "$end_date" ]; do
     echo "Generating synthetic observations for time: $start_date"
 
@@ -38,8 +38,17 @@ while [ "$start_date" -le "$end_date" ]; do
     sed -i "/^ *set obs_time *=/c\ set obs_time=${START_TIME}" prepbufr.csh || exit 3
     sed -i "/^ *set BUFR_dir *=/c\ set BUFR_dir=${OUTPUT_DIR}" prepbufr.csh || exit 4
     sed -i "/^ *set BUFR_in *=/c\  set BUFR_in=${OBS_DIR}/${ccyy_s}${mm_s}${dd_s}.nr/prepbufr.gdas.${ccyy_s}${mm_s}${dd_s}.t${hh_s}z.nr" prepbufr.csh || exit 5
+    sed -i '/set BUFR_out *=.*oyear.*omn.*ody.*24/c\ set BUFR_out = ${BUFR_odir}/temp_obs.${dtg}24' prepbufr.csh
+    sed -i "/^ *obs_window *=/c\ obs_window=1.6" input.nml || exit 6
+    sed -i "/^ *obs_window_cw *=/c\ obs_window_cw=1.6" input.nml || exit 7
 
-    ./prepbufr.csh &> prepbufr.log &
+
+    # ./prepbufr.csh &> prepbufr.log &
+    # Only run obs generation at 00/06/12/18
+    if (( hh_s % 6 == 0 )); then
+        ./prepbufr.csh &> prepbufr.log &
+    fi
+
 
     start_date=$("$BUILD_DIR/da_advance_time.exe" "$start_date" "${CYCLE_PERIOD}h" -f ccyymmddhhnn 2>/dev/null)
 done
