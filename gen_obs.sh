@@ -39,13 +39,13 @@ while [ "$start_date" -le "$end_date" ]; do
     sed -i "/^ *set BUFR_dir *=/c\ set BUFR_dir=${OUTPUT_DIR}" prepbufr.csh || exit 4
     sed -i "/^ *set BUFR_in *=/c\  set BUFR_in=${OBS_DIR}/${ccyy_s}${mm_s}${dd_s}.nr/prepbufr.gdas.${ccyy_s}${mm_s}${dd_s}.t${hh_s}z.nr" prepbufr.csh || exit 5
 
-    ./prepbufr.csh & || exit 6
+    ./prepbufr.csh &> prepbufr.log &
 
     start_date=$("$BUILD_DIR/da_advance_time.exe" "$start_date" "${CYCLE_PERIOD}h" -f ccyymmddhhnn 2>/dev/null)
 done
 
     echo "-------------------------------------------------------------"
     # echo "New start date: $start_date"
-
+wait
 exit 0
 ## 
