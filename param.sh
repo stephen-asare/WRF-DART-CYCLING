@@ -26,8 +26,8 @@ SCRIPTS_DIR=/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING
 NML_DIR=${SCRIPTS_DIR}/NML
 
 # Run directory
-RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2"     # set this appropriately #%%%#
-OBS_DIR=$RUN_DIR/input/obs
+RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2/WRF-DART-CYCLING"     # set this appropriately #%%%#
+DART_CYCLE=$RUN_DIR/dart_cycle
 RADAR_DIR=$RUN_DIR/input/radar
 BE_DIR=$RUN_DIR/input/be
 REAL_FC_ERA_DIR=$RUN_DIR/input
@@ -153,6 +153,9 @@ extract_vars_a=(U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN
 extract_vars_b=(U V W PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN U10 V10 T2 Q2 PSFC TSLB SMOIS TSK RAINC RAINNC GRAUPELNC REFL_10CM VT_DBZ_WT)
 cycle_vars_a=( U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN U10 V10 T2 Q2 PSFC TSLB SMOIS TSK)
 increment_vars_a=( U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN U10 V10 T2 Q2 PSFC)
+
+## DART 
+ADAPTIVE_INFLATION=1
 #########################################################################################################
 
 
