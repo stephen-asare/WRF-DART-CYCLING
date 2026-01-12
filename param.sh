@@ -26,8 +26,7 @@ SCRIPTS_DIR=/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING
 NML_DIR=${SCRIPTS_DIR}/NML
 
 # Run directory
-RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2/WRF-DART-CYCLING"     # set this appropriately #%%%#
-DART_CYCLE=$RUN_DIR/dart_cycle
+RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2"     # set this appropriately #%%%#
 RADAR_DIR=$RUN_DIR/input/radar
 BE_DIR=$RUN_DIR/input/be
 REAL_FC_ERA_DIR=$RUN_DIR/input
@@ -45,6 +44,7 @@ WPS_INPUT_DIR=$RUN_DIR/input/wps_input
 ############################################################
 EXP_DIR=$RUN_DIR/osse_out
 ENS_DIR=${EXP_DIR}/ens
+DART_CYCLE_DIR=$EXP_DIR/dart_cycle
 
 #wps & real
 # WPS_RUN_DIR=$EXP_DIR/wps_fc
