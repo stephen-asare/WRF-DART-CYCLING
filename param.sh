@@ -156,6 +156,9 @@ increment_vars_a=( U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNR
 
 ## DART 
 ADAPTIVE_INFLATION=1
+tasks_per_node=15  
+lay_out=1                                        
+
 #########################################################################################################
 
 
