@@ -17,11 +17,8 @@ nn_s=$(echo "$start_date" | cut -c 11-12)
 ## Directories
 WORK_DIR=$DART_CYCLE_DIR
 
-
-
 mkdir -p $WORK_DIR
 cd $WORK_DIR 
-
 
 
 ### Create initial adaptive inflation files
@@ -67,11 +64,88 @@ mv dart_log* "${WORK_DIR}/${ccyy_s}${mm_s}${dd_s}${hh_s}/Output/" || exit 2
 
 fi   
 
+## Create directories for Prior and Post files
+mkdir -p ${WORK_DIR}/priors
+mkdir -p ${WORK_DIR}/posts
+
+IMEM=1
+while (( IMEM <= ${NUM_MEMBERS} )) ; do
+
+if [[ $IMEM -lt 100 ]]; then export CMEM=e0$IMEM;  fi 
+if [[ $IMEM -lt 10  ]]; then export CMEM=e00$IMEM; fi 
+echo "Linking prior member ${ENS_WRF_DIR}/${CMEM}/wrfout_d0*_${ccyy_s}-${mm_s}-${dd_s}_15:00:00 ${WORK_DIR}/priors/wrfinput_d0*.$CMEM"
+for dom in 1 2; do
+    ln -sf "${ENS_WRF_DIR}/${CMEM}/wrfout_d0${dom}_${ccyy_s}-${mm_s}-${dd_s}_15:00:00" \
+           "${WORK_DIR}/priors/wrfinput_d0${dom}.${CMEM}"
+done
+let IMEM=$IMEM+1
+done
+
+ls $WORK_DIR/priors/wrfinput_d01* > input_list_d01.txt
+ls $WORK_DIR/priors/wrfinput_d02* > input_list_d02.txt
+
+cp input_list_d01.txt output_list_d01.txt
+cp input_list_d02.txt output_list_d02.txt
+
+sed -i 's/priors/posts/g' output_list_d01.txt
+sed -i 's/priors/posts/g' output_list_d02.txt
+
+# prepare executable file
+ln -sf $DART_DIR/models/wrf/work/filter .
+ln -sf $DART_DIR/assimilation_code/programs/gen_sampling_err_table/work/sampling_error_correction_table.nc .
+ln -sf $DART_DIR/models/wrf/work/pert_wrf_bc .
+
+cp ${NML_DIR}/input.nml.d02 input.nml
+
+cat > script.sed << EOF
+  /ens_size/c\
+  ens_size = ${NUM_MEMBERS},
+  /num_output_obs_members/c\
+      num_output_obs_members = ${NUM_MEMBERS},
+  /inf_flavor/c\
+      inf_flavor = ${inf_flavor}, 4
+  /inf_initial_from_restart/c\
+      inf_initial_from_restart = ${inf_initial_from_restart}, .false.,
+  /inf_sd_initial_from_restart/c\
+      inf_sd_initial_from_restart = ${inf_sd_initial_from_restart}, .false.,
+  /layout/c\
+      layout = ${lay_out},
+  /tasks_per_node/c\
+      tasks_per_node = ${tasks_per_node},
+  /first_bin_center/c\
+      first_bin_center = ${year},${month},${day},${hour}, 0, 0
+  /last_bin_center/c\
+      last_bin_center = ${year1},${month1},${day1},${hour1}, 0, 0
+EOF
+
+sed -f script.sed $NML_DIR/input.nml.d02 > input.nml
+# sed -f script.sed /gpfs/research/scratch/sa24m/base/rundir/input.nml > input.nml
+
+# exit 0
 ## Loop over cycles
-current_date=${start_date}
-while [ "$current_date" -le "$end_date" ]; do
-    echo "Starting DART cycle for $current_date"
-    mkdir -p $WORK_DIR/$current_date
-    cd $WORK_DIR/$current_date
-    ## link files
-    ln -sf ${SYS_OBS_DIR}/${current_date}/obs_seq.out ./obs_seq.out
+# current_date=${start_date}
+# while [ "$current_date" -le "$end_date" ]; do
+#     previous_date=$("$BUILD_DIR/da_advance_time.exe" "$current_date" "-${cycle_period}h" -f ccyymmddhhnn 2>/dev/null)
+#     echo "Previous date: $previous_date" 
+#     echo "Starting DART cycle for $current_date" 
+#     ccyy_p=$(echo "$previous_date" | cut -c 1-4) 
+#     mm_p=$(echo "$previous_date" | cut -c 5-6) 
+#     dd_p=$(echo "$previous_date" | cut -c 7-8) 
+#     hh_p=$(echo "$previous_date" | cut -c 9-10) 
+#     nn_p=$(echo "$previous_date" | cut -c 11-12) 
+
+#     ccyy_s=$(echo "$current_date" | cut -c 1-4)
+#     mm_s=$(echo "$current_date" | cut -c 5-6)
+#     dd_s=$(echo "$current_date" | cut -c 7-8)
+#     hh_s=$(echo "$current_date" | cut -c 9-10)
+#     nn_s=$(echo "$current_date" | cut -c 11-12)
+
+#     dtg="${ccyy_s}${mm_s}${dd_s}${hh_s}"
+#     mkdir -p $WORK_DIR/${dtg}
+#     cd $WORK_DIR/${dtg}
+
+#     ## link observation files
+#     ln -sf ${SYS_OBS_DIR}/obs_seq${dtg} .
+
+#     # link prior files
+
