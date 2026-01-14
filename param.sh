@@ -140,7 +140,7 @@ NL_ALPHA_VERTLOC=true
 
 #########################################################################################################
 # For Ensembles
-NUM_MEMBERS=30
+NUM_MEMBERS=3
 MAX_ERROR=5
 ASSIM_INT_HOURS=6
 IC_PERTSCALE=0.25
