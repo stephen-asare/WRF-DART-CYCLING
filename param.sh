@@ -8,10 +8,9 @@ echo "Activating conda environment"
 conda activate ncar_env
 # module restore
 module load intel/21
-module load openmpi/4.1.0
+ml netcdf/4.7.0
 ml python/3  
 
-RUN_CMD="srun --partition=chipilskigroup_q"
 
 # models directory
 MODEL_DIR=/gpfs/research/chipilskigroup/stephen_asare/models
