@@ -1,4 +1,20 @@
 # Generating Boundary Conditions
+
+First, lets create a separate conda enviroment and build some ncar utilities required.
+```
+source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
+conda create -n ncar_env -c conda-forge \
+    python=3.13 \
+    numpy \
+    netcdf-fortran \
+    esmf \
+    tempest-remap \
+    nco \
+    ncl \
+    pybufrkit 
+```
+Select yes(y) if prompted.
+
 Before moving on to data assimilation, generate your Initial Condition (IC) and Boundary Condition (BC) files.
 Edit the parameter file (`param.sh`) to match your device requirements, scheduler requirements, and local directory paths.
 Run the generation script:
