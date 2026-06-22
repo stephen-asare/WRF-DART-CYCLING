@@ -154,8 +154,8 @@ done
 # Cycling loop
 ####################
 
-# current_date="$start_date"
-current_date=201507140600
+current_date="$start_date"
+# current_date=201507140600
  
 echo
 echo "Starting DART cycling from ${start_date} to ${end_date} every ${cycle_period} hours"
@@ -358,8 +358,8 @@ write_qceff_table() {
     local f_kind="KDE_FILTER"
   else
     # QCEFF settings for full KDE deployment
-    local dist_type="NORMAL_DISTRIBUTION"
-    local f_kind="EAKF"
+    local dist_type="KDE_DISTRIBUTION"
+    local f_kind="KDE_FILTER"
   fi
   
   # Observation instrument error is traditionally left as normal 

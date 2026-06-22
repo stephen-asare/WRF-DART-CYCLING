@@ -26,7 +26,7 @@ SCRIPTS_DIR=/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING
 NML_DIR=${SCRIPTS_DIR}/NML
 
 # Run directory
-RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2"     # set this appropriately #%%%#
+RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run3"     # set this appropriately #%%%#
 RADAR_DIR=$RUN_DIR/input/radar
 BE_DIR=$RUN_DIR/input/be
 REAL_FC_ERA_DIR=$RUN_DIR/input
