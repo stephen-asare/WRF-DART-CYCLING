@@ -26,14 +26,14 @@ export EXP_name=gfs
 #export REL_DIR=/glade/scratch/junkyung/MPD_exp/pecan/NR_CNTL_july15_mod_as4_39h_era5_auto_70levs
 # Ensemble perturbation dir, working dir.
 # export REL_DIR=/gpfs/research/chipilskigroup/junkyung/ICBC/test
-export REL_DIR=/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/ens2
+export REL_DIR=/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/ens
 
 export INITIAL_DATE=2015071300
-export   FINAL_DATE=2015071512
+export   FINAL_DATE=2015071500
 
 # WRF real data dir
 # export REAL_DIR=/gpfs/research/chipilskigroup/junkyung/ICBC/test/REAL
-export REAL_DIR=/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/ens2/rc
+export REAL_DIR=/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/ens/rc
 mkdir -p $REAL_DIR/$INITIAL_DATE
 # cp /gpfs/home/sa24m/scratch/tqprof/run2/osse_out/icbc/$DATE/wrfinput_d01_00_18 $DA_FIRST_GUESS
 # echo "   Copy wrfinput_d01 from /gpfs/home/sa24m/scratch/tqprof/run2/osse_out/icbc/$DATE to $DA_FIRST_GUESS"
@@ -122,11 +122,16 @@ export NL_CALCULATE_CG_COST_FN=true
 
 # Modifying CV3 length scales and variance
 export NL_CV_OPTIONS=3
-export NL_AS1="0.063, 0.75, 1.50"
-export NL_AS2="0.063, 0.75, 1.50"
-export NL_AS3="0.22, 1.00, 1.50"
-export NL_AS4="0.05, 0.30, 0.70"
-export NL_AS5="0.27, 0.50, 1.50"
+# export NL_AS1="0.063, 0.75, 1.50"
+export NL_AS1="0.25, 1.00, 1.5"
+# export NL_AS2="0.063, 0.75, 1.50"
+export NL_AS2="0.25, 1.00, 1.50"
+# export NL_AS3="0.22, 1.00, 1.50"
+export NL_AS3="0.25, 1.00, 1.50"
+# export NL_AS4="0.05, 0.30, 0.70"
+export NL_AS4="0.25, 1.00, 1.50"
+# export NL_AS5="0.27, 0.50, 1.50"
+export NL_AS5="0.25, 1.00, 1.50"
 
 #export NL_USE_SOUNDOBS=true      
 #export NL_USE_SYNOPOBS=false     

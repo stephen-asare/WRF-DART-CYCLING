@@ -1,7 +1,7 @@
 #!/bin/ksh 
 #-----------------------------------------------------
 ulimit -s unlimited
-export NUM_MEMBERS=40
+export NUM_MEMBERS=50
 
 export RUN_WRFVAR=true            
 export RUN_UPDATE_BC=false        
@@ -26,11 +26,11 @@ export EXP_name=gfs
 #export REL_DIR=/glade/scratch/junkyung/MPD_exp/pecan/NR_CNTL_july15_mod_as4_39h_era5_auto_70levs
 # Ensemble perturbation dir, working dir.
 # export REL_DIR=/gpfs/research/chipilskigroup/junkyung/ICBC/test
-export REL_DIR=/gpfs/home/sa24m/scratch/tqprof/run2/ens2/test
+export REL_DIR=/gpfs/home/sa24m/scratch/tqprof/run2/ens/test
 
 # WRF real data dir
 # export REAL_DIR=/gpfs/research/chipilskigroup/junkyung/ICBC/test/REAL
-export REAL_DIR=/gpfs/research/scratch/sa24m/tqprof/run2/ens2/REAL
+export REAL_DIR=/gpfs/research/scratch/sa24m/tqprof/run2/ens/REAL
 
 #export WRFVAR_DIR=/glade/work/junkyung/fossell/wrfda-derecho (Check!!)
 export WRFVAR_DIR=/gpfs/research/chipilskigroup/stephen_asare/models/WRFDA/V4.5.2
@@ -54,9 +54,9 @@ export WPB_DIR=/gpfs/home/junkyung_ucar_edu/ICBC/fromdart
 # Define experiment time period and dimension
 
 export INITIAL_DATE=2015071300
-export   FINAL_DATE=2015071512
+export   FINAL_DATE=2015071500
 
-export CYCLE_PERIOD=24
+export CYCLE_PERIOD=48
 export DATE=$INITIAL_DATE
 export LBC_FREQ=6
 
@@ -111,12 +111,18 @@ export NL_NTMAX=200
 export NL_CALCULATE_CG_COST_FN=true
 
 # Modifying CV3 length scales and variance
+
 export NL_CV_OPTIONS=3
-export NL_AS1="0.063, 0.75, 1.50"
-export NL_AS2="0.063, 0.75, 1.50"
-export NL_AS3="0.22, 1.00, 1.50"
-export NL_AS4="0.05, 0.30, 0.70"
-export NL_AS5="0.27, 0.50, 1.50"
+# export NL_AS1="0.063, 0.75, 1.50"
+export NL_AS1="0.25, 0.1.00, 1.5"
+# export NL_AS2="0.063, 0.75, 1.50"
+export NL_AS2="0.25, 0.50, 1.50"
+# export NL_AS3="0.22, 1.00, 1.50"
+export NL_AS3="0.25, 0.1.00, 1.50"
+# export NL_AS4="0.05, 0.30, 0.70"
+export NL_AS4="0.25, 0.50, 1.50"
+# export NL_AS5="0.27, 0.50, 1.50"
+export NL_AS5="0.25, 0.1.00, 1.50"
 
 #export NL_USE_SOUNDOBS=true      
 #export NL_USE_SYNOPOBS=false     

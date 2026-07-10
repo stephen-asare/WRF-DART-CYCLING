@@ -44,7 +44,7 @@ STATIONS = [
         "lon": 260.0300,
         "lat": 37.7600,
         "pressures_hpa": [910],
-        "vars": {"T": 1.0, "Q": 0.2, "U": 1.5, "V": 1.5}
+        "vars": {"T": 1.0, "Q": 4e-8, "U": 1.5, "V": 1.5}
     }
 ]
 
@@ -79,7 +79,7 @@ def generate_files():
                 for var_name, err_var in station["vars"].items():
                     idx_token, type_code, qm, pc = VAR_MAP[subset][var_name]
 
-                    line = (f"{err_var:>6.2f} {lon:>9.4f} {lat:>8.4f} {p_hpa:>10.5E} "
+                    line = (f"{err_var:>10.3E} {lon:>9.4f} {lat:>8.4f} {p_hpa:>10.5E} "
                             f"{0.0:>7.2f} {0.0:>7.2f} {idx_token:>9} {hour_offset:>7.3f} "
                             f"{type_code:>3} {qm:>1} {subset:>7} {pc:>1}\n")
                     subset_buffers[subset].append(line)

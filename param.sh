@@ -22,11 +22,11 @@ WPS_DIR=$MODEL_DIR/WPS/V4.5
 DART_DIR=$MODEL_DIR/DART/v11.21.2
 
 # scripts directorys
-SCRIPTS_DIR=/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING
+SCRIPTS_DIR=/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING
 NML_DIR=${SCRIPTS_DIR}/NML
 
 # Run directory
-RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run3"     # set this appropriately #%%%#
+RUN_DIR="/gpfs/home/sa24m/scratch/tqprof/run2"     # set this appropriately #%%%#
 RADAR_DIR=$RUN_DIR/input/radar
 BE_DIR=$RUN_DIR/input/be
 REAL_FC_ERA_DIR=$RUN_DIR/input
@@ -41,8 +41,8 @@ WPS_INPUT_DIR=$RUN_DIR/input/wps_input
 # output data durectory:
 ############################################################
 EXP_DIR=$RUN_DIR/osse_out
-ENS_DIR=${EXP_DIR}/ens2
-DART_CYCLE_DIR=$EXP_DIR/dart_cycle
+ENS_DIR=${EXP_DIR}/ens
+DART_CYCLE_DIR=$EXP_DIR/dart_cycle2
 
 #wps & real
 # WPS_RUN_DIR=$EXP_DIR/wps_fc
@@ -55,7 +55,7 @@ NATURE_DIR=$EXP_DIR/nature_run
 SYS_OBS_DIR=$EXP_DIR/sys_obs
 
 # wrf-related
-ENS_WRF_DIR=$EXP_DIR/ens_wrf2
+ENS_WRF_DIR=$EXP_DIR/ens_wrf
 NATURE_ICBC_DIR=$RUN_DIR/icbc/test/REAL
 ANALYSIS_DIR=$RUN_DIR/icbc/test/rc
 INITIAL_FC=$EXP_DIR/initial_fc
@@ -154,7 +154,7 @@ cycle_vars_a=( U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN 
 increment_vars_a=( U V PH THM MU QVAPOR QCLOUD QRAIN QICE QSNOW QGRAUP QNICE QNRAIN U10 V10 T2 Q2 PSFC)
 
 ## DART 
-ADAPTIVE_INFLATION=1
+ADAPTIVE_INFLATION=2
 tasks_per_node=15  
 lay_out=1                                        
 
