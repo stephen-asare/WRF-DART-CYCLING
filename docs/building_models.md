@@ -195,7 +195,7 @@ cd models/wrf/work
 ```
 Once finished, ensure the filter executable has been generated in your `models/wrf/work directory.`
 
-# Compiling METplus
+<!-- # Compiling METplus
 **NB** Installing MET can be skipped for now since its not used in the current experiment.
 Create new directory to install package: 
 ```
@@ -342,4 +342,4 @@ echo 'export MET_INSTALL_DIR="/gpfs/research/chipilskigroup/stephen_asare/models
 echo 'export PATH="$MET_INSTALL_DIR/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
-
+ -->
