@@ -1,4 +1,4 @@
-import cdsapi
+from pathlib import Path
 import os
 import cdsapi
 
@@ -19,8 +19,9 @@ def get_output_dir():
 
     raise FileNotFoundError(f"param.sh not found in {Path.cwd()}")
 
-output_dir = get_output_dir()
+output_dir = Path(get_output_dir())
 output_dir.mkdir(parents=True, exist_ok=True)
+
 
 dataset = "reanalysis-era5-single-levels"
 request = {
