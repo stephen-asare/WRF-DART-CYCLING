@@ -1,22 +1,51 @@
-#! /bin/csh -f
-#
-# c-shell script to download selected files from gdex.ucar.edu using Wget
-# NOTE: if you want to run under a different shell, make sure you change
-#       the 'set' commands according to your shell's syntax
-# after you save the file, don't forget to make it executable
-#   i.e. - "chmod 755 <name_of_script>"
-#
-# Experienced Wget Users: add additional command-line flags here
-#   Use the -r (--recursive) option with care
-set opts = "-N"
-#
-set cert_opt = ""
-# If you get a certificate verification error (version 1.10 or higher),
-# uncomment the following line:
-#set cert_opt = "--no-check-certificate"
-#
+#!/bin/bash
+# ==============================================================================
+# Script: download_prepbufr.sh
+# Purpose: Download prepbufr files into the directory specified in param.sh.
+# ==============================================================================
+
+# Source parameters
+paramfile="$(pwd)/param.sh"
+
+if [[ ! -f "$paramfile" ]]; then
+    echo "ERROR: param.sh not found in $(pwd)!" >&2
+    exit 1
+fi
+
+source "$paramfile"
+
+# Check that the target directory is configured
+if [[ -z "$PREPBUFR_DATA_DIR" ]]; then
+    echo "ERROR: PREPBUFR_DATA_DIR is not set in param.sh!" >&2
+    exit 1
+fi
+
+echo "=============================================================================="
+echo "Downloading Prepbufr Observations..."
+echo "  Target Directory: $PREPBUFR_DATA_DIR"
+echo "=============================================================================="
+
+mkdir -p "$PREPBUFR_DATA_DIR"
+cd "$PREPBUFR_DATA_DIR" || exit 1
+
+opts="-N"
+cert_opt=""
+
 # download the file(s)
 wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150714.nr.tar.gz
 wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150715.nr.tar.gz
 wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150716.nr.tar.gz
 
+echo "Prepbufr files downloaded successfully!"
+
+echo "Extracting PrepBUFR archives..."
+
+for file in prepbufr.*.tar.gz; do
+    if [[ -f "$file" ]]; then
+        echo "Extracting $file..."
+        tar -xzf "$file"
+    fi
+done
+
+echo "PrepBUFR archives extracted successfully!"
+exit 0

@@ -1,9 +1,0 @@
-notes
-backfill2
-#####SBATCH --constraint="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
-
-chipilskigroup_q
-#SBATCH -C "intel,YEAR2018|intel,YEAR2019"
-
-genacc_q
-#SBATCH -C "intel,YEAR2013|intel,YEAR2014|intel,YEAR2015|intel,YEAR2017"

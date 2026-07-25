@@ -36,22 +36,12 @@ from netCDF4 import Dataset
 
 # ── user settings ──────────────────────────────────────────────────────────────
 
-# ── user settings ──────────────────────────────────────────────────────────────
-# ── user settings ──────────────────────────────────────────────────────────────
-OBS_FILES = [
-    "temp_obs.2015071406.ADPUPA",
-    "temp_obs.2015071409.ADPUPA",
-    "temp_obs.2015071412.ADPUPA",
-    "temp_obs.2015071415.ADPUPA",
-    "temp_obs.2015071418.ADPUPA",
-    "temp_obs.2015071421.ADPUPA",
-    "temp_obs.2015071500.ADPUPA",
-]
+WRF_DIR = os.environ.get("WRF_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/nature_run")
+OBS_DIR = os.environ.get("OBS_DIR", "/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs")
+OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_obs_wrf_single")
 
-WRF_DIR = ("/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/ens_wrf2/e001")
-OBS_DIR = ("/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs")
-OUTPUT_DIR = "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_obs_wrf_single"   # output files written here
-
+OBS_FILES = sorted([os.path.basename(f) for f in glob.glob(os.path.join(OBS_DIR, "temp_obs.*")) if not f.endswith('.py')])
+# print(OBS_FILES)
 # Reference time that hour=0 corresponds to
 # REF_TIME = datetime(2015, 7, 13, 0, 0, 0)
 
@@ -370,9 +360,9 @@ def process_file(obs_filepath):
             hour_val = float(tokens[7])
 
 
-            # if pres_hpa < 800.0:
-            #     tokens[0] = "99.99"
-            #     obs_err_var = float(tokens[0])
+            if pres_hpa < 800.0:
+                tokens[0] = "99.99"
+                obs_err_var = float(tokens[0])
                 
             index_prefix = get_index_prefix(index_token)
             if index_prefix is None or should_skip(index_prefix, obs2_val):

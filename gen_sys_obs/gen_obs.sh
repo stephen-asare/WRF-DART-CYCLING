@@ -1,6 +1,6 @@
 #!/bin/bash
 
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
+paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
 source "$paramfile"
 
 echo "Running gen_obs.sh with per-time ASCII+binary conversion..."
@@ -8,13 +8,13 @@ echo "Running gen_obs.sh with per-time ASCII+binary conversion..."
 start_date=2015071300
 end_date=2015071512
 
-SCRIPT_DIR="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/gen_sys_obs2"
+SCRIPT_DIR="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/gen_sys_obs"
 
 
 SYS_OBS_DIR=${SYS_OBS_DIR}/window_${start_date}_${end_date}
 rm -rf "${SYS_OBS_DIR}"
 mkdir -p "${SYS_OBS_DIR}"
-
+echo "Working directory: $(pwd)"
 
 # ===================================================
 # 1. GENERATE ASCII OBS (temp_obs)
@@ -31,6 +31,7 @@ while [ "$current_date" -le "$end_date" ]; do
     OUTPUT_DIR="${SYS_OBS_DIR}/${ccyy_s}${mm_s}${dd_s}${hh_s}"
     mkdir -p "${OUTPUT_DIR}/prepout"
     cd "${OUTPUT_DIR}" || exit 1
+    echo "Now in: $(pwd)"
 
     ln -sf "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/exe/"*.x "${OUTPUT_DIR}/" || exit 1
     ln -sf "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/work/advance_time" "${OUTPUT_DIR}/" || exit 1
@@ -46,6 +47,7 @@ while [ "$current_date" -le "$end_date" ]; do
     sed -i "s|^[[:space:]]*set[[:space:]]*DART_DIR[[:space:]]*=.*|set DART_DIR = ${DART_DIR}|g" prepbufr.csh || exit 2
     sed -i "s|^[[:space:]]*set[[:space:]]*BUFR_dir[[:space:]]*=.*|set BUFR_dir = ${BUFR_dir}|g" prepbufr.csh || exit 5
     sed -i "s|^[[:space:]]*set[[:space:]]*DART_exec_dir[[:space:]]*=.*|set DART_exec_dir = ${DART_exec_dir}|g" prepbufr.csh || exit 6
+    sed -i "s|^[[:space:]]*set[[:space:]]*zeroZ[[:space:]]*=.*|set zeroZ = yes|g" prepbufr.csh || exit 7
 
     # Configure namelist
     cp "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/work/input.nml" "${OUTPUT_DIR}/input.nml" || exit 7

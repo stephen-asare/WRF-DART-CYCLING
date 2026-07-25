@@ -2,12 +2,16 @@ import os
 from datetime import datetime, timedelta
 
 # ── TIME & DATE SETTINGS ──────────────────────────────────────────────────────
-START_DATE = datetime(2015, 7, 14, 6, 0)
-END_DATE   = datetime(2015, 7, 15, 0, 0)
-FREQ_HOURS = 3
-REF_TIME   = datetime(2015, 7, 14, 0, 0)
+start_date_str = os.environ.get("START_DATE", "2015071406")
+end_date_str = os.environ.get("END_DATE", "2015071500")
+ref_time_str = os.environ.get("REF_TIME", "2015071400")
 
-OUTPUT_DIR = "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs"
+START_DATE = datetime.strptime(start_date_str, "%Y%m%d%H")
+END_DATE   = datetime.strptime(end_date_str, "%Y%m%d%H")
+FREQ_HOURS = int(os.environ.get("FREQ_HOURS", "3"))
+REF_TIME   = datetime.strptime(ref_time_str, "%Y%m%d%H")
+
+OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs")
 OUTPUT_PREFIX = "temp_obs."
 
 # ── VARIABLE DEFINITIONS ──────────────────────────────────────────────────────
@@ -44,7 +48,7 @@ STATIONS = [
         "lon": 260.0300,
         "lat": 37.7600,
         "pressures_hpa": [910],
-        "vars": {"T": 1.0, "Q": 4e-8, "U": 1.5, "V": 1.5}
+        "vars": {"T": 1.0, "Q": 0.04, "U": 1.5, "V": 1.5}
     }
 ]
 
@@ -79,7 +83,7 @@ def generate_files():
                 for var_name, err_var in station["vars"].items():
                     idx_token, type_code, qm, pc = VAR_MAP[subset][var_name]
 
-                    line = (f"{err_var:>10.3E} {lon:>9.4f} {lat:>8.4f} {p_hpa:>10.5E} "
+                    line = (f"{err_var:>5.2f} {lon:>9.4f} {lat:>8.4f} {p_hpa:>10.5E} "
                             f"{0.0:>7.2f} {0.0:>7.2f} {idx_token:>9} {hour_offset:>7.3f} "
                             f"{type_code:>3} {qm:>1} {subset:>7} {pc:>1}\n")
                     subset_buffers[subset].append(line)

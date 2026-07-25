@@ -8,8 +8,26 @@
 #SBATCH --output=gen_retro_icbc.%j.log
 #SBATCH --export=ALL
 
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
+paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
+if [[ ! -f "$paramfile" ]]; then
+    paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
+fi
 source "$paramfile"
+
+# Auto-submission block: if running interactively, submit itself using param.sh settings
+if [[ -z "$SLURM_JOB_ID" ]]; then
+    echo "Submitting gen_icbc3.sh to SLURM using parameters from param.sh..."
+    sbatch \
+        -A "${ICBC_SBATCH_ACCOUNT}" \
+        -p "${ICBC_SBATCH_PARTITION}" \
+        -n "${ICBC_SBATCH_TASKS}" \
+        -t "${ICBC_SBATCH_TIME}" \
+        -C "${ICBC_SBATCH_CONSTRAINT}" \
+        --job-name="gen_icbc3" \
+        --output="gen_retro_icbc.%j.log" \
+        "$0" "$@"
+    exit 0
+fi
 
 datea=$INITIAL_DATE
 datefnl=$FINAL_DATE
@@ -123,7 +141,7 @@ echo "geogrid done"
 
 ln -fs ungrib/Variable_Tables/Vtable.ERA-interim.pl Vtable
 
-FILES=/gpfs/research/chipilskigroup/stephen_asare/data/ERA5/era5*.grib
+FILES=${ERA5_DATA_DIR}/era5*.grib
 echo "FILES = $FILES"
 
 if ls FILE.*.nc 1> /dev/null 2>&1; then

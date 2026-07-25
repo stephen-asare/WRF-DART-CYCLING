@@ -21,9 +21,7 @@ echo "Nodes: $SLURM_JOB_NODELIST"
 #   ./advance_run.sh 2015071412 2015071512
 #-----------------------------------------------------------------------------------------------------------
 
-source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
-
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"   # set this appropriately #%%%#
+paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"   # set this appropriately #%%%#
 source "$paramfile"
 
 start_date=$1
@@ -40,7 +38,7 @@ hh_e=$(echo "$end_date" | cut -c 9-10)
 
 ln -sf $WRF_DIR/run/* .
 rm -rf namelist.input
-DE_FCST_RANGE=12
+DE_FCST_RANGE=${3:-${DE_FCST_RANGE:-50}}
 cat > namelist.input << EOF
  &time_control
  run_days                            = 0,
