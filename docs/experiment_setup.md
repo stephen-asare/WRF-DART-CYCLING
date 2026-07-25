@@ -30,146 +30,134 @@ The simulation relies on the following parameterization schemes across both doma
 *   **Planetary Boundary Layer:** Mellor-Yamada-Janjic (MYJ) (`bl_pbl_physics = 2`)
 *   **Cumulus:** Kain-Fritsch on Domain 1 (`cu_physics = 1`); explicitly turned off for the 3km Domain 2.
 
+---
+
 ## Data Assimilation (DART) Setup
 
-The assimilation cycle employs an Ensemble Adjustment Kalman Filter (EAKF) driven by DART, interacting with the WRF state. 
+The assimilation cycle employs an either Ensemble Adjustment Kalman Filter (EAKF) or Kernel Density Filter (KDE) driven by DART, interacting with the WRF state. 
 
 *   **Ensemble Size:** 50 members
 *   **Assimilation Interval:** 3 hours for standard state variables
 *   **Radar Assimilation Frequency:** 15 minutes
 *   **Inflation:** Adaptive inflation is enabled (`ADAPTIVE_INFLATION=1`)
 *   **Initial Perturbation Scale:** 0.25 
-*   **Assimilated Variables (18 total):** `U`, `V`, `PH`, `THM`, `MU`, `QVAPOR`, `QCLOUD`, `QRAIN`, `QICE`, `QSNOW`, `QGRAUP`, `QNICE`, `QNRAIN`, `U10`, `V10`, `T2`, `Q2`, `PSFC`
+*   **Assimilated Variables for spin up cycle:** `U`, `V`, `PH`, `THM`, `MU`, `QVAPOR`, `QCLOUD`, `QRAIN`, `QICE`, `QSNOW`, `QGRAUP`, `QNICE`, `QNRAIN`, `U10`, `V10`, `T2`, `Q2`, `PSFC`
+*   **Assimilated Variables for target cycyle:** `U`, `V`, `THM`, `QVAPOR`
 
+---
 
 ## Repository Scripts & Architecture
 
-This repository implements a complete WRF-DART ensemble data assimilation cycling system, including data acquisition, initial and boundary condition generation, observation processing, ensemble forecasting, assimilation, diagnostics, and visualization utilities.
+This repository implements a completely centralized, modernized WRF-DART ensemble data assimilation pipeline. All configuration parameters, scheduler resource allocations, and module environments are driven by a single master parameter file, eliminating redundant scripts and fragile hardcoded replacements.
 
-Below is a summary of the major scripts and directories and their roles within the experiment workflow.
+Below is a summary of the major scripts and their roles within the newly modularized workflow.
 
-### Core Configuration
+### Core Configuration & Environment
 
 * **`param.sh`**
-  The master configuration file for the entire experiment. It defines:
+  The **single source of truth** and master configuration file for the entire pipeline. All drivers and submission scripts source this file at runtime. It centrally defines:
+  * **Experiment Timing & Variables:** Start/end dates, cycling intervals, assimilated state variables, and ensemble size (`NUM_MEMBERS`).
+  * **Directory Setup:** Standardized paths for models, scratch spaces, observations, and outputs.
+  * **SLURM / SBATCH Resource Headers:** Complete queue parameters (`-A`, `-p`, `-N`, `-n`, `-t`, `--mem-per-cpu`) customized specifically for each stage (ICBC generation, ensemble perturbations, initial forecasts, cycling forecasts, and DART filter execution).
 
-  * Experiment start and end dates
-  * Assimilation frequency and cycling intervals
-  * Number of ensemble members
-  * Domain configurations
-  * Directory paths
-  * Scheduler and computational resource settings
-  * Environment variables and module configurations
-
-  Scripts source this file at runtime, making it the central location for modifying experiment parameters.
 ---
 
 ### Data Acquisition
 
-* **`download_prebufr.sh`**
-  Downloads real observation Prebufr data required by the experiment.
+The data download utilities directly reference target directories defined in `param.sh`, ensuring input datasets land directly in the structured paths expected by the workflow:
 
-* **`download_era_5_pl.py`**
-  Downloads ERA5 pressure-level reanalysis data from the Copernicus Climate Data Store (CDS).
+* **`download_prepbufr.sh`**
+  Downloads real observation PrepBUFR data required by the experiment directly to the configured observation directory.
 
-* **`download_era_5_sf.py`**
-  Downloads ERA5 single-level and surface fields needed for generating model initial and boundary conditions.
+* **`era_api_new_pl.py`**
+  Downloads ERA5 pressure-level reanalysis data from the Copernicus Climate Data Store (CDS) into the configured ERA5 directory.
+
+* **`era_api_new_sf.py`**
+  Downloads ERA5 single-level and surface fields necessary for generating model initial and boundary conditions.
 
 ---
 
 ### Initial and Boundary Condition Generation
 
 * **`gen_icbc.sh`**
-  Main driver script responsible for generating initial condition (IC) and boundary condition (BC) files for the experiment.
+  The primary driver script responsible for running WPS (`geogrid`, `ungrib`, `metgrid`) and `real.exe` to generate the baseline unperturbed initial condition (`wrfinput`) and lateral boundary condition (`wrfbdy`) files. Auto-submits itself to SLURM using queue configurations sourced from `param.sh`.
 
-* **`gen_init.ksh`**
-  Generates perturbed initial ensemble members. It utilizes WRFDA's `randomcv` utility to create random perturbations that represent analysis uncertainty and provide ensemble spread.
+* **`gen_init.sh`**
+  The **consolidated ensemble initialization engine** that replaces legacy multi-script chains. It creates member subdirectories, generates random initial condition perturbations using WRFDA's `randomcv` utility, and orchestrates SLURM job dependency tracking (`afterok`) to safely trigger corresponding lateral boundary condition perturbations (`da_update_bc`) without race conditions.
 
 ---
 
-### Observation Processing
+### Observation Processing & Drivers
 
-* **`make_obs.ksh`**
-  Main observation generation driver. Creates DART-compatible observation sequence files from either synthetic observations or real observational datasets.
+Observation generation is decoupled into two automated, top-level drivers that orchestrate Python extraction tools by passing environment variables sourced from `param.sh`:
 
-* **`sys_temp_obs.py`**
-  Generates synthetic temperature observations used in observing system simulation experiments (OSSEs).
+* **`gen_obs_prepbufr.sh`**
+  Top-level orchestration driver for creating synthetic observations based on **PrepBUFR locations and metadata**. Automatically executes ASCII extraction (`gen_obs.sh`), quality control filtering, Nature Run observation-space extraction, and sequence formatting.
 
-* **`extract_wrf_obs_earthwind_ObsError2.py`**
-  Extracts model state variables from WRF output and converts them into DART observation-space quantities while assigning observation error statistics.
+* **`gen_obs_manual.sh`**
+  Top-level orchestration driver for creating synthetic observations at **manually configured stations and networks**. Coordinates manual network setup (`sys_temp_obs.py`), Nature Run extraction, and sequence formatting.
 
-* **`filter_obs.py`**
-  Applies quality control procedures and filters observations according to user-defined criteria before assimilation.
+* **`make_obs.sh`**
+  Modernized shell utility that invokes DART's `create_real_obs` program to convert intermediate ASCII observation files into official DART observation sequence files (`obs_seq.in`), dynamically inheriting date windows and directory paths from `param.sh`.
 
-* **`gen_obs.sh`**
-  General observation generation workflow that coordinates observation extraction and DART observation file creation.
-  
+* **Python Observation Processing Toolchain:**
+  * **`filter_obs.py`**: Applies spatial quality control procedures to filter observations according to boundary domains and variable rules.
+  * **`sys_temp_obs.py`**: Configures artificial station layouts and timestamps for customized observing system simulation experiments (OSSEs).
+  * **`extract_wrf_obs_earthwind_ObsError2.py`**: Interpolates WRF Nature Run grid fields to observation coordinates, applies observational error statistics, and converts variables into DART-compatible state quantities.
+
 ---
 
-### Ensemble Forecasting and Data Assimilation
+### Ensemble Forecasting & Data Assimilation Cycling
 
-* **`ensemble_fcst.sh`**
-  Executes ensemble forecasts across compute nodes. Handles model initialization, parallel execution of ensemble members, and forecast management.
+To eliminate script modification during execution, forecast routines are decoupled into reusable execution modules and purpose-specific launchers:
 
 * **`advance_run.sh`**
-  Advances the assimilation cycle by updating simulation times and preparing the next forecast-assimilation window.
+  The core, reusable model forecast driver. Instead of editing files on the fly, it accepts the simulation start date, end date, and forecast duration (`DE_FCST_RANGE`) dynamically as command-line arguments.
+
+* **`ensemble_fcst_full.sh`**
+  Executes long-range free forecasts (e.g., 50-hour runs) across all ensemble members using centralized long-job SLURM settings. Used to generate the free-run ensemble and establish the Nature Run (truth state) for synthetic observation generation.
+
+* **`ensemble_fcst_3h.sh`**
+  Executes short-range (e.g., 3-hour) forecasts across ensemble members using dedicated spin-up SLURM queue parameters. Used to advance initial state members to the starting timestamp of the cycling period.
 
 * **`run_cycle.sh`**
-  Primary experiment driver. Coordinates the complete cycling workflow, including:
-
-  1. Ensemble forecasting
-  2. DART assimilation
-  3. Ensemble updates
-  4. Transition to the next cycle
-
-* **`da_run_wrfvar.ksh`**
-  Executes WRFDA first-guess and data assimilation procedures.
-
-* **`run_mode.ksh`**
-  Driver script for running MODE verification and object-based diagnostic analyses.
+  The primary data assimilation cycling driver. Managing the iterative EAKF assimilation loop, it automates:
+  1. Setting up short-term ensemble forecast windows via `advance_run.sh` using cycling queue configurations.
+  2. Executing DART (`filter`) across compute nodes to adjust ensemble member states against observation sequence files.
+  3. Updating boundary tendencies and progressing simulation timestamps to the next assimilation cycle.
 
 ---
 
-### Repository Entry Points
+### Repository Workflow & Entry Points
 
-For this experiment, the typical execution sequence is:
+For an end-to-end OSSE experiment, the simplified execution sequence is structured as follows:
+
 ```text
-param.sh
+param.sh (Master Config, Module Loader & SLURM Queue Settings)
    ↓
-gen_icbc.sh
+gen_icbc3.sh (WPS & Real.exe — Base IC/BC Generation)
    ↓
-gen_init.ksh
-   ├──→ da_run_suite_wrapper.ksh
-   ├──→ da_set_defaults.ksh
-   ├──→ da_perturb_wrf_bc.ksh
-   ├──→ da_run_wrfvar.ksh
-   ├──→ da_run_update_bc.ksh
-   ├──→ da_run_wpb.ksh
-   ├──→ da_run_job.ksh
-   └──→ da_perturb_wrf_ic.ksh
+gen_init.sh (Consolidated WRFDA randomcv IC & Update LBC Perturbation Engine)
    ↓
-ensemble_fcst.sh
-   └──→ advance_run.sh
+[Phase 1: Free-Run & Synthetic Observation Generation]
+   ├──→ ensemble_fcst_full.sh (Long Free-Run Forecast to establish Nature Run/Truth State)
+   │       └──→ advance_run.sh [passed duration argument dynamically]
+   │
+   ├──→ gen_obs_prepbufr.sh (Top-Level PrepBUFR Synthetic Obs Driver)
+   │       ├──→ gen_obs.sh / prepbufr.csh (DART prep_bufr ASCII extraction)
+   │       ├──→ filter_obs.py (Spatial/Quality domain filtering)
+   │       ├──→ extract_wrf_obs_earthwind_ObsError2.py (Nature Run extraction & observation error assignment)
+   │       └──→ make_obs.sh (Dynamic DART observation sequence conversion)
+   │
+   └──→ gen_obs_manual.sh (Top-Level Manual Synthetic Obs Driver)
+           ├──→ sys_temp_obs.py (Manual location & station network generator)
+           ├──→ extract_wrf_obs_earthwind_ObsError2.py (Nature Run extraction & observation error assignment)
+           └──→ make_obs.sh (Dynamic DART observation sequence conversion)
    ↓
-gen_obs.sh
-   ├──→ Synthetic observations using prepbufr observation locations and meta data
-   │      ├──→ prepbufr.csh
-   │      ├──→ filter_obs.py
-   │      ├──→ extract_wrf_obs_earthwind_ObsError2.py
-   │      └──→ make_obs.ksh
-   └──→ Synthetic observations, manally setting observation locations and meta data.
-          ├──→ sys_temp_obs.py
-          ├──→ extract_wrf_obs_earthwind_ObsError2.py
-          └──→ make_obs.ksh
-   ↓
-run_cycle.sh
-   └──→ advance_run.sh
-```
-
-## Best Practices & Directory Setup
-
-To avoid file quota limits and ensure optimal read/write speeds, all outputs and intermediary files should be generated in a high-performance scratch space. 
-
-**Recommended Setup:**
-Create an `osse_out` directory within your primary scratch space (e.g., `/gpfs/home/<user>/scratch/tqprof/run2/osse_out`). Within this output directory, the pipeline will automatically generate necessary subdirectories (such as `dart_cycle`, `ens_fcst`, `ens_icbc`, `sys_obs`, and domain-specific DART folders) to keep the initial state data, ensemble members, and analysis outputs strictly isolated
-
+[Phase 2: Data Assimilation Cycling]
+   ├──→ ensemble_fcst_3h.sh (Initial Short-Range Spin-Up Forecast)
+   │       └──→ advance_run.sh [passed duration argument dynamically]
+   │
+   └──→ run_cycle.sh (Iterative EAKF Assimilation Cycling Engine)
+           ├──→ DART Filter Execution (EAKF analysis via run_filter)
+           └──→ advance_run.sh (Next-cycle ensemble background advancement)
