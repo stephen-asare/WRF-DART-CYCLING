@@ -19,9 +19,8 @@ conda deactivate
 ```
 
 ## Downloading WPS data
-We require a mandatory and optional static data for wrf to run. More information on the static data can be found in [
-WRF Preprocessing System (WPS) Geographical Input Data Mandatory Fields Downloads]{https://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html}
-
+We require a mandatory and optional static data for wrf to run. More information on the static data can be found in [WRF Preprocessing System (WPS) Geographical Input Data Mandatory Fields Downloads]{https://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html}
+**NB** Create a directory for WPS geographic data and download the all static data into, then configure the `param.sh` to the directory created.
 
 ## Downloading Real Observations
 We intend on generating synthetic observations from a nature run, but then, we will exatract observation location and meta data from real observations.Additionally, we will use this real observation to match all the ensembles and select an appropraite nature run, which will be the member which closely matches the real observation in terms of evolution of the system.
