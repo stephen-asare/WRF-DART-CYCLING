@@ -40,6 +40,7 @@ You should find these folders below if the script executed appropraitely.
 ```
 For easier assess to the 6 hourly files move all the files into a single subdirectory.
 ```
+cd ${PREPBUFR_DATA_DIR}
 mkdir bufr_data
 mv 201507*/* bufr_data/
 ```
