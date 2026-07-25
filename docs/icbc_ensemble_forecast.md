@@ -19,19 +19,16 @@ Before moving on to data assimilation, generate your Initial Condition (IC) and 
 Edit the parameter file (`param.sh`) to match your device requirements, scheduler requirements, and local directory paths.
 Run the generation script:
 ```
-sbatch gen_icbc.sh
+./gen_icbc.sh
 ```
 This should produce directory `2015071300` containing wrfinput and wrfbdy files.
 
 ### Generate Perturbed Ensembles
 Using the IC and BC files produced for the initial date of the experiment, use randomcv from WRFDA to produce randomly perturbed ensembles.
 
-Edit `gen_init.ksh`:Set `SCRIPTS_DIR` to your current script directory.
-Set `REAL_DIR` to the scratch experiment directory.
-Update  the initial and final date as well as path to first guess, `wrfbdy` nad `wrfinput` created from `gen_icbc.sh` above.
 Execute the script:
 ```
-./gen_init.ksh
+./gen_init.sh
 ```
 ### Full Experiment Cycle 
 Run the full experiment cycle to select your nature run. Update inital and final date to experiment initial and final date.

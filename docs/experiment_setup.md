@@ -139,22 +139,22 @@ gen_icbc3.sh (WPS & Real.exe — Base IC/BC Generation)
    ↓
 gen_init.sh (Consolidated WRFDA randomcv IC & Update LBC Perturbation Engine)
    ↓
-[Phase 1: Free-Run & Synthetic Observation Generation]
+[Free-Run & Synthetic Observation Generation]
    ├──→ ensemble_fcst_full.sh (Long Free-Run Forecast to establish Nature Run/Truth State)
    │       └──→ advance_run.sh [passed duration argument dynamically]
    │
-   ├──→ gen_obs_prepbufr.sh (Top-Level PrepBUFR Synthetic Obs Driver)
+   ├──→ gen_obs_prepbufr.sh (PrepBUFR Synthetic Obs Driver)
    │       ├──→ gen_obs.sh / prepbufr.csh (DART prep_bufr ASCII extraction)
    │       ├──→ filter_obs.py (Spatial/Quality domain filtering)
    │       ├──→ extract_wrf_obs_earthwind_ObsError2.py (Nature Run extraction & observation error assignment)
    │       └──→ make_obs.sh (Dynamic DART observation sequence conversion)
    │
-   └──→ gen_obs_manual.sh (Top-Level Manual Synthetic Obs Driver)
+   └──→ gen_obs_manual.sh (Manual Synthetic Obs Driver)
            ├──→ sys_temp_obs.py (Manual location & station network generator)
            ├──→ extract_wrf_obs_earthwind_ObsError2.py (Nature Run extraction & observation error assignment)
            └──→ make_obs.sh (Dynamic DART observation sequence conversion)
    ↓
-[Phase 2: Data Assimilation Cycling]
+[Data Assimilation Cycling]
    ├──→ ensemble_fcst_3h.sh (Initial Short-Range Spin-Up Forecast)
    │       └──→ advance_run.sh [passed duration argument dynamically]
    │
