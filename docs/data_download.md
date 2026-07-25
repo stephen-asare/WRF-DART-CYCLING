@@ -8,7 +8,7 @@ conda create -n python311_env python=3.11 -y
 conda activate python311_env
 conda install cdsapi -y
 ```
-**Important**: Before running the Python scripts below, modify the param file to appropraitely store the downloaded files.
+
 ```
 python3 era_api_new_pl.py
 python3 era_api_new_sf.py
@@ -17,6 +17,7 @@ Deactivate the environment:
 ```
 conda deactivate
 ```
+This should create a directory for the ERA5 data and store them there appropraitely.
 
 ## Downloading WPS data
 We require a mandatory and optional static data for wrf to run. More information on the static data can be found in [WRF Preprocessing System (WPS) Geographical Input Data Mandatory Fields Downloads]{https://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html}
