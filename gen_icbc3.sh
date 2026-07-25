@@ -1,12 +1,4 @@
 #!/bin/bash
-#SBATCH --job-name="gen_icbc2"
-#SBATCH --ntasks=15
-#SBATCH -A backfill2
-#SBATCH -t 00:50:00
-#SBATCH --partition=backfill2
-#SBATCH -C "intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
-#SBATCH --output=gen_retro_icbc.%j.log
-#SBATCH --export=ALL
 
 paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
 if [[ ! -f "$paramfile" ]]; then
@@ -14,7 +6,6 @@ if [[ ! -f "$paramfile" ]]; then
 fi
 source "$paramfile"
 
-# Auto-submission block: if running interactively, submit itself using param.sh settings
 if [[ -z "$SLURM_JOB_ID" ]]; then
     echo "Submitting gen_icbc3.sh to SLURM using parameters from param.sh..."
     sbatch \
@@ -23,8 +14,9 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
         -n "${ICBC_SBATCH_TASKS}" \
         -t "${ICBC_SBATCH_TIME}" \
         -C "${ICBC_SBATCH_CONSTRAINT}" \
-        --job-name="gen_icbc3" \
+        --job-name="gen_icbc" \
         --output="gen_retro_icbc.%j.log" \
+        --export=ALL \
         "$0" "$@"
     exit 0
 fi
@@ -192,7 +184,7 @@ mkdir -p "$OUTPUT_DIR"
 echo "Cycle dir: $OUTPUT_DIR"
 echo "Cycle window: $INITIAL_DATE --> $FINAL_DATE"
 
-    cat > namelist.input << EOF
+cat > namelist.input << EOF
 &time_control
  run_days                            = 0,
  run_hours                           = ${fcst_hours},

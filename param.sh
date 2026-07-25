@@ -44,7 +44,7 @@ WPS_INPUT_DIR=$RUN_DIR/input/wps_input
 ############################################################
 EXP_DIR=$RUN_DIR/osse_out
 ENS_DIR=${EXP_DIR}/ens
-DART_CYCLE_DIR=$EXP_DIR/dart_cycle2
+DART_CYCLE_DIR=$EXP_DIR/dart_cycle
 
 ICBC_DIR=$EXP_DIR/icbc
 
@@ -190,17 +190,17 @@ export ICBC_SBATCH_TIME="00:50:00"
 export ICBC_SBATCH_CONSTRAINT="intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 
 # 2. Ensemble Initialization - WRFDA / randomcv Job Settings (gen_init.sh)
-export PERT_WRFVAR_SBATCH_ACCOUNT="chipilskigroup_q"
-export PERT_WRFVAR_SBATCH_PARTITION="chipilskigroup_q"
-export PERT_WRFVAR_SBATCH_TASKS=10
+export PERT_WRFVAR_SBATCH_ACCOUNT="backfill2"
+export PERT_WRFVAR_SBATCH_PARTITION="backfill2"
+export PERT_WRFVAR_SBATCH_TASKS=5
 export PERT_WRFVAR_SBATCH_TIME="00:30:00"
 export PERT_WRFVAR_SBATCH_MEM="8000M"
-export PERT_WRFVAR_SBATCH_CONSTRAINT="intel,YEAR2018|intel,YEAR2019"
+export PERT_WRFVAR_SBATCH_CONSTRAINT="intel,YEAR2013|intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 
 # 3. Ensemble Initialization - Update BC Job Settings (gen_init.sh)
-export PERT_UPDBC_SBATCH_ACCOUNT="chipilskigroup_q"
-export PERT_UPDBC_SBATCH_PARTITION="chipilskigroup_q"
-export PERT_UPDBC_SBATCH_TASKS=10
+export PERT_UPDBC_SBATCH_ACCOUNT="backfill2"
+export PERT_UPDBC_SBATCH_PARTITION="backfill2"
+export PERT_UPDBC_SBATCH_TASKS=5
 export PERT_UPDBC_SBATCH_TIME="00:30:00"
 export PERT_UPDBC_SBATCH_MEM="8000M"
 
