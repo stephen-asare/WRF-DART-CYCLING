@@ -1,6 +1,6 @@
 # Data Download
 ## Downloading ERA5 Reanalysis
-This project uses the 4th generation atmospheric reanalyses from the European Centre for Medium-Range Weather Forecasts (ECMWF) to produce Initial and Lateral Boundary Conditions (IC/BC). You will run the WPS executables (ungrib.exe, geogrid.exe, and metgrid.exe) initialized at the start date of the experiment.Download ECMWF DataIf you have not already downloaded the data, use the provided download.sh and download2.sh scripts, or use the CDS API via Python as shown below.Create a Conda environment and install the CDS API client:
+This project uses the 4th generation atmospheric reanalyses from the European Centre for Medium-Range Weather Forecasts (ECMWF) to produce Initial and Lateral Boundary Conditions (IC/BC). You will run the WPS executables (ungrib.exe, geogrid.exe, and metgrid.exe) initialized at the start date of the experiment.Download ECMWF Data, using the provided `era_api_new_sf.py` and `era_api_new_pl` scripts, and download real NCEP observations using `download_prepbufr.sh`. To begin first create a Conda environment and install the CDS API client:
 
 ```
 source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
