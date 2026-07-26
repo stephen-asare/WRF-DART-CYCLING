@@ -205,13 +205,13 @@ export PERT_UPDBC_SBATCH_TIME="00:30:00"
 export PERT_UPDBC_SBATCH_MEM="8000M"
 
 # 4a. Initial Ensemble Forecast Job Settings (ensemble_fcst.sh)
-export ENS_FCST_SBATCH_ACCOUNT="backfill2"
-export ENS_FCST_SBATCH_PARTITION="backfill2"
-export ENS_FCST_SBATCH_NODES=5
-export ENS_FCST_SBATCH_TASKS=30
+export ENS_FCST_SBATCH_ACCOUNT="chipilskigroup_q"
+export ENS_FCST_SBATCH_PARTITION="chipilskigroup_q"
+export ENS_FCST_SBATCH_NODES=15
+export ENS_FCST_SBATCH_TASKS=75
 export ENS_FCST_SBATCH_TIME="3:55:00"
 export ENS_FCST_SBATCH_MEM="4000M"
-export ENS_FCST_SBATCH_CONSTRAINT="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
+export ENS_FCST_SBATCH_CONSTRAINT="intel,YEAR2018|intel,YEAR2019"
 
 # 4b. Cycling Forecast Job Settings (run_cycle.sh)
 export CYCLE_FCST_SBATCH_ACCOUNT="backfill2"
@@ -219,10 +219,10 @@ export CYCLE_FCST_SBATCH_PARTITION="backfill2"
 export CYCLE_FCST_SBATCH_NODES=5
 export CYCLE_FCST_SBATCH_TASKS=30
 export CYCLE_FCST_SBATCH_TIME="00:30:00"
-export CYCLE_FCST_SBATCH_MEM="4000M"
+export CYCLE_FCST_SBATCH_MEM="8000M"
 export CYCLE_FCST_SBATCH_CONSTRAINT="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 
-# 5. DART Filter Job Settings (run_cycle.sh)
+# 5. DART Filter Job Settings 
 export FILTER_SBATCH_ACCOUNT="chipilskigroup_q"
 export FILTER_SBATCH_PARTITION="chipilskigroup_q"
 export FILTER_SBATCH_NODES=15

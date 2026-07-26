@@ -28,7 +28,8 @@ mkdir -p "$WORK_DIR"
 cd "$WORK_DIR" || exit 1
 
 MEM=1
-while [[ $MEM -le $NUM_MEMBERS ]]; do
+# while [[ $MEM -le $NUM_MEMBERS ]]; do  ## use only 1 since we want to just select ensemble member 1 as nature run to generate observations.
+while [ $MEM -eq 1 ]; do
    CMEM=$(printf "e%03d" $MEM)
    MEMBER_DIR="${WORK_DIR}/${CMEM}"
    mkdir -p "$MEMBER_DIR"
