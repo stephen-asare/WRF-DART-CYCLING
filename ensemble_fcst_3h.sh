@@ -18,7 +18,7 @@ fi
 source "$paramfile"
 
 # Spin-up range is 3 hours by default
-FCST_RANGE=${SPINUP_TIME:-3}
+FCST_RANGE=${SPINUP_TIME:-6}
 
 # Calculate final date of this short forecast
 FINAL_3H_DATE=$("$BUILD_DIR/da_advance_time.exe" "$INITIAL_DATE" "$FCST_RANGE" 2>/dev/null)
