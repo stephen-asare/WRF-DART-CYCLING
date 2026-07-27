@@ -29,7 +29,6 @@ import os
 import glob
 import re
 
-# ── user settings ──────────────────────────────────────────────────────────────
 BASE_DIR = os.environ["BASE_DIR"]
 SEARCH_PATTERN = os.environ["SEARCH_PATTERN"]
 OUTPUT_DIR = os.environ["OUTPUT_DIR"]

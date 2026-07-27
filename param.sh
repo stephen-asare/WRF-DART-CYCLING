@@ -49,7 +49,7 @@ DART_CYCLE_DIR=$EXP_DIR/dart_cycle
 ICBC_DIR=$EXP_DIR/icbc
 
 WPS_ENS_DIR=$EXP_DIR/wps_ens
-ENS_FCST_DIR=$EXP_DIR/ens_fcst
+ENS_FCST_DIR=$EXP_DIR/initial_fcst
 NATURE_DIR=$EXP_DIR/nature_run
 NATURE_DIR2=/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/nature_run
 SYS_OBS_DIR=$EXP_DIR/sys_obs
@@ -220,7 +220,7 @@ export CYCLE_FCST_SBATCH_ACCOUNT="backfill2"
 export CYCLE_FCST_SBATCH_PARTITION="backfill2"
 export CYCLE_FCST_SBATCH_NODES=5
 export CYCLE_FCST_SBATCH_TASKS=30
-export CYCLE_FCST_SBATCH_TIME="00:30:00"
+export CYCLE_FCST_SBATCH_TIME="01:30:00"
 export CYCLE_FCST_SBATCH_MEM="8000M"
 export CYCLE_FCST_SBATCH_CONSTRAINT="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 

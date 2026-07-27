@@ -4,7 +4,7 @@
 # Purpose: Generate the initial short-range forecast (e.g., 3 hours) for all
 #          ensemble members to spin up/start the cycling DA process.
 # ==============================================================================
-
+ulimit -s unlimited
 # 1. Source parameters
 paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
 if [[ ! -f "$paramfile" ]]; then
@@ -29,7 +29,6 @@ echo "  Start: $INITIAL_DATE"
 echo "  End:   $FINAL_3H_DATE"
 echo "=============================================================================="
 
-# Use ENS_FCST_DIR as the working folder for members
 WORK_DIR=${ENS_FCST_DIR}
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR" || exit 1
