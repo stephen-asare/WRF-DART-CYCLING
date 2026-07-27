@@ -32,9 +32,9 @@ opts="-N"
 cert_opt=""
 
 # download the file(s)
+wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150713.nr.tar.gz
 wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150714.nr.tar.gz
 wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150715.nr.tar.gz
-wget $cert_opt $opts https://osdf-director.osg-htc.org/ncar/gdex/d337000/tarfiles/2015/prepbufr.20150716.nr.tar.gz
 
 echo "Prepbufr files downloaded successfully!"
 

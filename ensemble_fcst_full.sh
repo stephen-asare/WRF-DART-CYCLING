@@ -22,8 +22,8 @@ echo "==========================================================================
 echo "Starting Full Cycle Ensemble Forecasts (Range: ${phase1_DE_FCST_RANGE:-50} hours)"
 echo "=============================================================================="
 
-# Use ENS_WRF_DIR as the working folder for members
-WORK_DIR=${ENS_WRF_DIR}
+# Use NATURE_DIR as the working folder for members
+WORK_DIR=${NATURE_DIR}
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR" || exit 1
 

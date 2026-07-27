@@ -35,11 +35,9 @@ from datetime import datetime, timedelta
 from netCDF4 import Dataset
 
 # ── user settings ──────────────────────────────────────────────────────────────
-
-WRF_DIR = os.environ.get("WRF_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/nature_run")
-OBS_DIR = os.environ.get("OBS_DIR", "/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs")
-OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_obs_wrf_single")
-
+WRF_DIR = os.environ["WRF_DIR"]
+OBS_DIR = os.environ["OBS_DIR"]
+OUTPUT_DIR = os.environ["OUTPUT_DIR"]
 OBS_FILES = sorted([os.path.basename(f) for f in glob.glob(os.path.join(OBS_DIR, "temp_obs.*")) if not f.endswith('.py')])
 # print(OBS_FILES)
 # Reference time that hour=0 corresponds to

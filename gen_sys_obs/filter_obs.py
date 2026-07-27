@@ -30,9 +30,9 @@ import glob
 import re
 
 # ── user settings ──────────────────────────────────────────────────────────────
-BASE_DIR       = os.environ.get("BASE_DIR", "/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512")
-SEARCH_PATTERN = os.environ.get("SEARCH_PATTERN", os.path.join(BASE_DIR, "*/prepout/temp_obs.*"))
-OUTPUT_DIR     = os.environ.get("OUTPUT_DIR", os.path.join(BASE_DIR, "filtered_obs"))
+BASE_DIR = os.environ["BASE_DIR"]
+SEARCH_PATTERN = os.environ["SEARCH_PATTERN"]
+OUTPUT_DIR = os.environ["OUTPUT_DIR"]
 
 LON_MIN, LON_MAX = 251.52, 266.82
 LAT_MIN, LAT_MAX = 34.85, 43.50

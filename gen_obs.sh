@@ -6,12 +6,12 @@ if [[ ! -f "$paramfile" ]]; then
 fi
 source "$paramfile"
 
-echo "Running gen_obs.sh with per-time ASCII+binary conversion..."
+echo "Running gen_obs.sh with per-time ASCII+binary conversion"
 
 start_date=${INITIAL_DATE:-2015071300}
 end_date=${FINAL_DATE:-2015071512}
 
-SCRIPT_DIR="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/gen_sys_obs"
+SCRIPT_DIR="${SCRIPTS_DIR}/gen_sys_obs"
 
 
 SYS_OBS_DIR=${SYS_OBS_DIR}/window_${start_date}_${end_date}
@@ -20,7 +20,7 @@ mkdir -p "${SYS_OBS_DIR}"
 
 
 # ===================================================
-# 1. GENERATE ASCII OBS (temp_obs)
+# 1. GENERATE ASCII OBS
 # ===================================================
 current_date=$start_date
 while [ "$current_date" -le "$end_date" ]; do
@@ -53,7 +53,7 @@ while [ "$current_date" -le "$end_date" ]; do
     # Configure namelist
     cp "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/work/input.nml" "${OUTPUT_DIR}/input.nml" || exit 7
 
-    ./prepbufr.csh ${ccyy_s} ${mm_s} ${dd_s} ${hh_s} > prepbufr.log 2>&1 || { echo "prepbufr.csh failed for $current_date"; exit 11; }&
+    ./prepbufr.csh ${ccyy_s} ${mm_s} ${dd_s} ${hh_s} > prepbufr.log 2>&1 || { echo "prepbufr.csh failed for $current_date"; exit 11; }
 
     current_date=$("$BUILD_DIR/da_advance_time.exe" "$current_date" "24h" -f ccyymmddhh)
 done

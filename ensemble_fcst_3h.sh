@@ -29,8 +29,8 @@ echo "  Start: $INITIAL_DATE"
 echo "  End:   $FINAL_3H_DATE"
 echo "=============================================================================="
 
-# Use ENS_WRF_DIR as the working folder for members
-WORK_DIR=${ENS_WRF_DIR}
+# Use ENS_FCST_DIR as the working folder for members
+WORK_DIR=${ENS_FCST_DIR}
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR" || exit 1
 

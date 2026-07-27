@@ -2,16 +2,16 @@ import os
 from datetime import datetime, timedelta
 
 # ── TIME & DATE SETTINGS ──────────────────────────────────────────────────────
-start_date_str = os.environ.get("START_DATE", "2015071406")
-end_date_str = os.environ.get("END_DATE", "2015071500")
-ref_time_str = os.environ.get("REF_TIME", "2015071400")
+start_date_str = os.environ["START_DATE"]
+end_date_str = os.environ["END_DATE"]
+ref_time_str = os.environ["REF_TIME"]
 
 START_DATE = datetime.strptime(start_date_str, "%Y%m%d%H")
 END_DATE   = datetime.strptime(end_date_str, "%Y%m%d%H")
-FREQ_HOURS = int(os.environ.get("FREQ_HOURS", "3"))
+FREQ_HOURS = int(os.environ["FREQ_HOURS"])
 REF_TIME   = datetime.strptime(ref_time_str, "%Y%m%d%H")
 
-OUTPUT_DIR = os.environ.get("OUTPUT_DIR", "/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/sys_temp_obs")
+OUTPUT_DIR = os.environ["OUTPUT_DIR"]
 OUTPUT_PREFIX = "temp_obs."
 
 # ── VARIABLE DEFINITIONS ──────────────────────────────────────────────────────
@@ -48,7 +48,7 @@ STATIONS = [
         "lon": 260.0300,
         "lat": 37.7600,
         "pressures_hpa": [910],
-        "vars": {"T": 1.0, "Q": 0.04, "U": 1.5, "V": 1.5}
+        "vars": {"T": 1.0, "Q": 0.000001, "U": 1.5, "V": 1.5}
     }
 ]
 

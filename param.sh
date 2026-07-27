@@ -51,6 +51,7 @@ ICBC_DIR=$EXP_DIR/icbc
 WPS_ENS_DIR=$EXP_DIR/wps_ens
 ENS_FCST_DIR=$EXP_DIR/ens_fcst
 NATURE_DIR=$EXP_DIR/nature_run
+NATURE_DIR2=/gpfs/home/sa24m/scratch/tqprof/run2/osse_out/nature_run
 SYS_OBS_DIR=$EXP_DIR/sys_obs
 
 # wrf-related
@@ -75,6 +76,7 @@ DE_FCST_RANGE=6
 SPINUP_TIME=3
 LBC_FREQ=6        #GFS or FNL inteval 
 OUTPUT_INTERVAL=180
+INTERVAL_HOURS=3
 
 # Domain:
 MAP_PROJ=lambert
@@ -209,8 +211,8 @@ export ENS_FCST_SBATCH_ACCOUNT="chipilskigroup_q"
 export ENS_FCST_SBATCH_PARTITION="chipilskigroup_q"
 export ENS_FCST_SBATCH_NODES=15
 export ENS_FCST_SBATCH_TASKS=75
-export ENS_FCST_SBATCH_TIME="3:55:00"
-export ENS_FCST_SBATCH_MEM="4000M"
+export ENS_FCST_SBATCH_TIME="13:55:00"
+export ENS_FCST_SBATCH_MEM="8000M"
 export ENS_FCST_SBATCH_CONSTRAINT="intel,YEAR2018|intel,YEAR2019"
 
 # 4b. Cycling Forecast Job Settings (run_cycle.sh)

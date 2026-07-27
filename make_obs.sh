@@ -17,11 +17,9 @@ if [[ ! -f "$paramfile" ]]; then
 fi
 source "$paramfile"
 
-# Check if arguments are passed to override defaults
-OBS_SUBDIR=${1:-"sys_obs_wrf_single"}
-ASCII_SUBDIR=${2:-"ascii_to_obs_single"}
+OBS_SUBDIR=${1:-"sys_obs_wrf"}
+ASCII_SUBDIR=${2:-"ascii_to_obs"}
 
-# Define directories relative to the current window
 WINDOW_DIR="${SYS_OBS_DIR}/window_${INITIAL_DATE}_${FINAL_DATE}"
 OBS_DIR="${WINDOW_DIR}/${OBS_SUBDIR}"
 RUN_DIR="${WINDOW_DIR}/${ASCII_SUBDIR}"
@@ -36,7 +34,6 @@ mkdir -p "$RUN_DIR"
 rm -rf "${OBS_DIR}/temp_obs"
 mkdir -p "${OBS_DIR}/temp_obs"
 
-# Concatenate daily files
 echo "Concatenating daily observation files..."
 cd "${OBS_DIR}" || exit 1
 unique_dates=$(ls temp_obs.*.*.wrf 2>/dev/null | cut -d'.' -f2 | cut -c1-8 | sort -u)
@@ -50,27 +47,30 @@ for date_str in $unique_dates; do
     cat temp_obs.${date_str}* > temp_obs/temp_obs.${date_str}
 done
 
-# Go to build run directory
 cd "$RUN_DIR" || exit 1
 
 # Link DART binaries
 ln -sf "${DART_DIR}/observations/obs_converters/NCEP/ascii_to_obs/work/create_real_obs" .
 ln -sf "${DART_DIR}/models/wrf/work/obs_sequence_tool" .
 
-# Generate input.nml dynamically
+# Generate input.nml 
 start_year=$(echo "$INITIAL_DATE" | cut -c 1-4)
 start_month=$(echo "$INITIAL_DATE" | cut -c 5-6 | sed 's/^0//')
 start_day=$(echo "$INITIAL_DATE" | cut -c 7-8 | sed 's/^0//')
 
-# Calculate total days in window
-diff_hours=$("$BUILD_DIR/da_advance_time.exe" "$FINAL_DATE" -"$INITIAL_DATE" 2>/dev/null)
+init_greg=$("$BUILD_DIR/da_advance_time.exe" "$INITIAL_DATE" 0 -g 2>/dev/null)
+final_greg=$("$BUILD_DIR/da_advance_time.exe" "$FINAL_DATE" 0 -g 2>/dev/null)
+
+read init_days init_secs <<< "$init_greg"
+read final_days final_secs <<< "$final_greg"
+
+diff_hours=$(( (final_days - init_days) * 24 + (final_secs - init_secs) / 3600 ))
 tot_days=$(( diff_hours / 24 + 1 ))
 
 echo "Creating input.nml with Start Year: $start_year, Month: $start_month, Day: $start_day, Total Days: $tot_days"
 
 cp "${DART_DIR}/observations/obs_converters/NCEP/ascii_to_obs/work/input.nml" .
 
-# Remove existing ncepobs_nml and obs_sequence_tool_nml to prevent duplicates
 sed -i '/^[[:space:]]*&ncepobs_nml[[:space:]]*$/,/^[[:space:]]*\/[[:space:]]*$/d' input.nml
 sed -i '/^[[:space:]]*&obs_sequence_tool_nml[[:space:]]*$/,/^[[:space:]]*\/[[:space:]]*$/d' input.nml
 
