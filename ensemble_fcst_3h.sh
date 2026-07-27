@@ -8,7 +8,7 @@ ulimit -s unlimited
 # 1. Source parameters
 paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
 if [[ ! -f "$paramfile" ]]; then
-    paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
+    paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
 fi
 
 if [[ ! -f "$paramfile" ]]; then

@@ -21,7 +21,13 @@ echo "Nodes: $SLURM_JOB_NODELIST"
 #   ./advance_run.sh 2015071412 2015071512
 #-----------------------------------------------------------------------------------------------------------
 
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"   # set this appropriately #%%%#
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+paramfile="${SCRIPT_DIR}/param.sh"
+
+if [[ ! -f "$paramfile" ]]; then
+    echo "ERROR: param.sh not found at $paramfile!" >&2
+    exit 1
+fi
 source "$paramfile"
 
 start_date=$1

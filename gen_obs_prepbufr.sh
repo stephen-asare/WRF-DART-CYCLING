@@ -5,14 +5,11 @@
 #          locations and metadata.
 # ==============================================================================
 
-# 1. Source parameters
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
-if [[ ! -f "$paramfile" ]]; then
-    paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+paramfile="${SCRIPT_DIR}/param.sh"
 
 if [[ ! -f "$paramfile" ]]; then
-    echo "ERROR: param.sh not found!" >&2
+    echo "ERROR: param.sh not found at $paramfile!" >&2
     exit 1
 fi
 source "$paramfile"
@@ -81,7 +78,7 @@ fi
 
 # --- STEP 4: make_obs.sh ---
 if [[ -f "${CHECKPOINT_DIR}/step4_done" ]]; then
-    echo "Skipping Step 4: make_obs.sh (Already completed)"
+    echo "Skipping Step 4: make_obs.sh"
 else
     echo "Step 4: Converting ASCII observations to DART format..."
     bash "${SCRIPTS_DIR}/make_obs.sh" "sys_obs_wrf" "ascii_to_obs"

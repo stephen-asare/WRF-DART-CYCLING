@@ -6,13 +6,11 @@
 # ==============================================================================
 
 # 1. Source parameters
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"
-if [[ ! -f "$paramfile" ]]; then
-    paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+paramfile="${SCRIPT_DIR}/param.sh"
 
 if [[ ! -f "$paramfile" ]]; then
-    echo "ERROR: param.sh not found!" >&2
+    echo "ERROR: param.sh not found at $paramfile!" >&2
     exit 1
 fi
 source "$paramfile"
@@ -105,16 +103,10 @@ cat >> input.nml <<EOF
    lat1   = -90.0,
    lat2   =  90.0
   /
-
-&obs_sequence_tool_nml
-   num_input_files = 2,
-   filename_seq    = 'obs_seq20150714', 'obs_seq20150715',
-   filename_out    = 'obs_seq_single',
-   print_only      = .false.
-/
 EOF
 
-# Run DART ascii_to_obs converter
+# 1. Run DART ascii_to_obs converter FIRST
+# This actually generates the obs_seq20* files
 ./create_real_obs > log.create_real_obs 2>&1
 RC=$?
 if [[ $RC -ne 0 ]]; then
@@ -122,12 +114,36 @@ if [[ $RC -ne 0 ]]; then
     exit $RC
 fi
 
-# Run obs_sequence_tool to merge files if they exist
-if [[ -f "obs_seq20150714" && -f "obs_seq20150715" ]]; then
-    ./obs_sequence_tool > log.obs_sequence_tool 2>&1
-    echo "Merged obs sequence files into obs_seq_single."
+# 2. NOW dynamically check what files were just created
+SEQ_FILES=$(ls obs_seq20* 2>/dev/null)
+NUM_FILES=$(echo "$SEQ_FILES" | wc -w)
+
+if [[ $NUM_FILES -gt 0 ]]; then
+    FORMATTED_FILES=$(echo $SEQ_FILES | sed "s/[^ ]*/'&'/g" | sed 's/ /, /g')
 else
-    echo "Single day obs files not found; skipped merging."
+    FORMATTED_FILES="''"
+fi
+
+# 3. Append the dynamic obs_sequence_tool_nml block
+cat >> input.nml <<EOF
+
+&obs_sequence_tool_nml
+   num_input_files = ${NUM_FILES},
+   filename_seq    = ${FORMATTED_FILES},
+   filename_out    = 'obs_seq_single',
+   print_only      = .false.
+/
+EOF
+
+# 4. Run obs_sequence_tool to merge them
+if [[ $NUM_FILES -gt 1 ]]; then
+    ./obs_sequence_tool > log.obs_sequence_tool 2>&1
+    echo "Merged $NUM_FILES files into obs_seq_single."
+elif [[ $NUM_FILES -eq 1 ]]; then
+    mv $SEQ_FILES obs_seq_single
+    echo "Only one day found. Renamed $SEQ_FILES to obs_seq_single."
+else
+    echo "WARNING: No observation sequence files found to merge."
 fi
 
 echo "Observation conversion complete!"

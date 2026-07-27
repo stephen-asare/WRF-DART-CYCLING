@@ -2,12 +2,13 @@
 
 source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
 
-paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run2/WRF-DART-CYCLING/param.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+paramfile="${SCRIPT_DIR}/param.sh"
+
 if [[ ! -f "$paramfile" ]]; then
-    echo "ERROR: paramfile not found: $paramfile" >&2
+    echo "ERROR: param.sh not found at $paramfile!" >&2
     exit 1
 fi
-# shellcheck source=/dev/null
 source "$paramfile"
 
 start_date=201507130600
@@ -57,9 +58,9 @@ sed -i "/ num_output_state_members/c\    num_output_state_members = ${NUM_MEMBER
 sed -i "/&model_nml/,/\// s/'T','QTY_POTENTIAL_TEMPERATURE'/'THM','QTY_POTENTIAL_TEMPERATURE'/" input.nml
 sed -i '/&assim_tools_nml/a \   distribute_mean = .true.,' input.nml
 
-echo "Linking initial wrfinput files"
-ln -sf "${ENS_WRF_DIR}/e001/wrfout_d01_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d01
-ln -sf "${ENS_WRF_DIR}/e001/wrfout_d02_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d02
+echo "Linking initial wrfinput files from ${ENS_FCST_DIR}/e001/wrfout_d01_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00"
+ln -sf "${ENS_FCST_DIR}/e001/wrfout_d01_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d01
+ln -sf "${ENS_FCST_DIR}/e001/wrfout_d02_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d02
 
 if [ "$ADAPTIVE_INFLATION" = "1" ]; then
     echo "Initial adaptive inflation"
@@ -92,10 +93,11 @@ ln -sf "$DART_DIR/models/wrf/work/obs_sequence_tool" .
 ### Link initial priors  
 IMEM=1
 rm -f "${WORK_DIR}/priors"/wrfinput_d0*.e???
+echo "Linking initial forecast files from ${ENS_FCST_DIR}/${CMEM}/wrfout_d0${dom}_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00"
 while (( IMEM <= NUM_MEMBERS )); do
     CMEM=$(printf "e%03d" "$IMEM")
     for dom in 1 2; do
-        ln -sf "${ENS_WRF_DIR}/${CMEM}/wrfout_d0${dom}_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" \
+        ln -sf "${ENS_FCST_DIR}/${CMEM}/wrfout_d0${dom}_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" \
                 "${WORK_DIR}/priors/wrfinput_d0${dom}.${CMEM}"
     done
     (( IMEM++ ))
@@ -341,11 +343,10 @@ sed -i "s|^[[:space:]]*qceff_table_filename[[:space:]]*=.*|   qceff_table_filena
     echo "Running DART filter for cycle at ${ccyy_c}${mm_c}${dd_c}${hh_c}${nn_c} ..."
     date
     if [ "$cycle" = "2015071409" ] || [ "$cycle" = "2015071412" ]; then
-        ln -sf "/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/ascii_to_obs_single/obs_seq_single" obs_seq.out || exit 1
+        ln -sf "/gpfs/research/scratch/sa24m/tqprof/run3/osse_out/sys_obs/window_2015071300_2015071512/ascii_to_obs_manual/obs_seq_single" obs_seq.out || exit 1  ## Update appropraitely
     else
-        ln -sf "/gpfs/research/scratch/sa24m/tqprof/run2/osse_out/sys_obs/window_2015071300_2015071512/ascii_to_obs/obs_seq_single" obs_seq.out || exit 1
+        ln -sf "/gpfs/research/scratch/sa24m/tqprof/run3/osse_out/sys_obs/window_2015071300_2015071512/ascii_to_obs/obs_seq_single" obs_seq.out || exit 1  ## Update appropraitely
     fi
-
     #################################
     # Link priors if not first cycle
     #################################
