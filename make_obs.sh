@@ -5,7 +5,6 @@
 #          sequence format using the DART create_real_obs utility.
 # ==============================================================================
 
-# 1. Source parameters
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 paramfile="${SCRIPT_DIR}/param.sh"
 
@@ -23,7 +22,7 @@ OBS_DIR="${WINDOW_DIR}/${OBS_SUBDIR}"
 RUN_DIR="${WINDOW_DIR}/${ASCII_SUBDIR}"
 
 echo "=============================================================================="
-echo "Running DART ascii_to_obs converter..."
+echo "Running DART ascii_to_obs converter"
 echo "  Source OBS_DIR: $OBS_DIR"
 echo "  Working RUN_DIR: $RUN_DIR"
 echo "=============================================================================="
@@ -32,7 +31,7 @@ mkdir -p "$RUN_DIR"
 rm -rf "${OBS_DIR}/temp_obs"
 mkdir -p "${OBS_DIR}/temp_obs"
 
-echo "Concatenating daily observation files..."
+echo "Concatenating daily observation files"
 cd "${OBS_DIR}" || exit 1
 unique_dates=$(ls temp_obs.*.*.wrf 2>/dev/null | cut -d'.' -f2 | cut -c1-8 | sort -u)
 
@@ -41,7 +40,7 @@ if [[ -z "$unique_dates" ]]; then
 fi
 
 for date_str in $unique_dates; do
-    echo " -> Merging files for ${date_str}"
+    echo "Merging files for ${date_str}"
     cat temp_obs.${date_str}* > temp_obs/temp_obs.${date_str}
 done
 
@@ -105,8 +104,7 @@ cat >> input.nml <<EOF
   /
 EOF
 
-# 1. Run DART ascii_to_obs converter FIRST
-# This actually generates the obs_seq20* files
+# Run DART ascii_to_obs converter
 ./create_real_obs > log.create_real_obs 2>&1
 RC=$?
 if [[ $RC -ne 0 ]]; then
@@ -114,7 +112,7 @@ if [[ $RC -ne 0 ]]; then
     exit $RC
 fi
 
-# 2. NOW dynamically check what files were just created
+# Check what files were just created
 SEQ_FILES=$(ls obs_seq20* 2>/dev/null)
 NUM_FILES=$(echo "$SEQ_FILES" | wc -w)
 
@@ -124,7 +122,7 @@ else
     FORMATTED_FILES="''"
 fi
 
-# 3. Append the dynamic obs_sequence_tool_nml block
+# Append obs_sequence_tool_nml block
 cat >> input.nml <<EOF
 
 &obs_sequence_tool_nml
@@ -135,7 +133,7 @@ cat >> input.nml <<EOF
 /
 EOF
 
-# 4. Run obs_sequence_tool to merge them
+# Run obs_sequence_tool to merge them
 if [[ $NUM_FILES -gt 1 ]]; then
     ./obs_sequence_tool > log.obs_sequence_tool 2>&1
     echo "Merged $NUM_FILES files into obs_seq_single."
