@@ -21,13 +21,9 @@ echo "Nodes: $SLURM_JOB_NODELIST"
 #   ./advance_run.sh 2015071412 2015071512
 #-----------------------------------------------------------------------------------------------------------
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-paramfile="${SCRIPT_DIR}/param.sh"
+source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
 
-if [[ ! -f "$paramfile" ]]; then
-    echo "ERROR: param.sh not found at $paramfile!" >&2
-    exit 1
-fi
+paramfile="/gpfs/home/sa24m/Research/tqprof/scripts/run3/WRF-DART-CYCLING/param.sh"   # set this appropriately #%%%#
 source "$paramfile"
 
 start_date=$1

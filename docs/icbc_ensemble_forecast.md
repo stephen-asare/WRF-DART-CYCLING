@@ -61,11 +61,19 @@ This repeat the entire process of gen_obs_prepbufr.sh but only using your own sp
 ### inital 3Hr Forecast
 Run a 3hr forecast for all the ensembles. Alternatively, you can use the 3hr forecast from the full experiment cycle if you run the ful cycle experiment for all members.
 ```
-./ensemble_fcst_3h.sh
+./ensemble_fcst_6h.sh
 ```
 
 ### Begin cycling sequence
-Lastly run the cycling script to run the ensemble forecast and data assimilation cycle. If you ran the full experiment cycle previously, then you can simply configure `run_cycle.sh` to start from the first 3hr forecast of all the members, if not configure `run_cycle.sh` to start from the output of `ensemble_fcst_3h.sh`.
+Lastly run the cycling script to run the ensemble forecast and data assimilation cycle. If you ran the full experiment cycle previously, then you can simply configure `run_cycle.sh` to start from the first 3hr forecast of all the members, if not configure `run_cycle.sh` to start from the output of `ensemble_fcst_6h.sh`.
+
 ```
-./run_cycle.sh
+tmux new -s dart_cycle
+./run_cycle.sh >& run_cycle.log &
+```
+Press Ctrl+B, let go, and then press D. This detaches you from the session. You can safely exit the session while the program runs.
+To check on it later:
+Log back into the cluster and type
+```
+tmux new -s dart_cycle
 ```
