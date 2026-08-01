@@ -6,7 +6,7 @@ This project uses the 4th generation atmospheric reanalyses from the European Ce
 source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
 conda create -n python311_env python=3.11 -y
 conda activate python311_env
-conda install cdsapi -y
+conda install conda-forge::cdsapi
 ```
 
 ```
