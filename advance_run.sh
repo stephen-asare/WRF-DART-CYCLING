@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --job-name=wrf_run
 #SBATCH --ntasks=30
-#SBATCH -N 5
+#SBATCH -N 6
 #SBATCH -A backfill2
-#SBATCH -t 3:55:00
+#SBATCH -t 1:55:00
 #SBATCH --partition=backfill2
 #SBATCH --constraint="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 #SBATCH --mem-per-cpu=4000M

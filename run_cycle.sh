@@ -35,6 +35,7 @@ echo "NUM_MEMBERS:      ${NUM_MEMBERS}"
 echo "===================================================="
 echo
 
+
 ############################
 # Initial adaptive inflation
 ############################
@@ -42,12 +43,16 @@ inf_flavor=2
 inf_initial_from_restart=".false."
 inf_sd_initial_from_restart=".false."
 
-cp /gpfs/research/chipilskigroup/stephen_asare/wrf_dart_debug_data/base/output/2017042712/input.nml input.nml
+# cp ${SYS_OBS_DIR}/${ccyy_s}${mm_s}${dd_s}${hh_s}/input.nml .  # Appropraite to use but not working now
+# cp /gpfs/research/chipilskigroup/stephen_asare/wrf_dart_debug_data/base/output/2017042712/input.nml input.nml
+cp $DART_DIR/models/wrf/work/input.nml input.nml
 sed -i "/  ens_size/c\  ens_size                  = ${NUM_MEMBERS}," input.nml
 sed -i "/ num_domains/c\  num_domains               = ${MAX_DOM}, " input.nml  
 sed -i "/ assimilation_period_seconds/c\  assimilation_period_seconds               = 10800, " input.nml
 sed -i "/  num_output_obs_members/c\  num_output_obs_members   = ${NUM_MEMBERS}," input.nml
 sed -i "/  inf_flavor/c\  inf_flavor                  = ${inf_flavor}, 4," input.nml
+sed -i "/  inf_initial_from_restart/c\  inf_initial_from_restart    = ${inf_initial_from_restart}, .false.," input.nml
+sed -i "/  inf_sd_initial_from_restart/c\  inf_sd_initial_from_restart = ${inf_sd_initial_from_restart}, .false.," input.nml
 sed -i "/  layout/c\  layout                  = ${lay_out}," input.nml
 sed -i "/  tasks_per_node/c\  tasks_per_node          = ${tasks_per_node}," input.nml
 sed -i "/ input_state_file_list/c\   input_state_file_list = 'input_list_d01.txt', 'input_list_d02.txt'," input.nml
@@ -58,11 +63,91 @@ sed -i "/ num_output_state_members/c\    num_output_state_members = ${NUM_MEMBER
 sed -i "/&model_nml/,/\// s/'T','QTY_POTENTIAL_TEMPERATURE'/'THM','QTY_POTENTIAL_TEMPERATURE'/" input.nml
 sed -i '/&assim_tools_nml/a \   distribute_mean = .true.,' input.nml
 
+sed -i "/'PSFC',  'QTY_SURFACE_PRESSURE',     'TYPE_PSFC', 'UPDATE','999'/a \
+                             'QCLOUD','QTY_CLOUD_LIQUID_WATER','TYPE_QC','UPDATE','999',\n\
+                             'QRAIN','QTY_RAINWATER_MIXING_RATIO','TYPE_QR','UPDATE','999',\n\
+                             'QSNOW','QTY_SNOW_MIXING_RATIO','TYPE_QS','UPDATE','999',\n\
+                             'QICE','QTY_CLOUD_ICE','TYPE_QI','UPDATE','999',\n\
+                             'QGRAUP','QTY_GRAUPEL_MIXING_RATIO','TYPE_QG','UPDATE','999',\n\
+                             'QNICE','QTY_ICE_NUMBER_CONCENTRATION','TYPE_QNICE','UPDATE','999',\n\
+                             'QNRAIN','QTY_RAIN_NUMBER_CONCENTR','TYPE_QNRAIN','UPDATE','999',\n\
+                             'U10','QTY_U_WIND_COMPONENT','TYPE_U10','UPDATE','999',\n\
+                             'V10','QTY_V_WIND_COMPONENT','TYPE_V10','UPDATE','999',\n\
+                             'T2','QTY_TEMPERATURE','TYPE_T2','UPDATE','999',\n\
+                             'Q2','QTY_SPECIFIC_HUMIDITY','TYPE_Q2','UPDATE','999'," input.nml
+
+# Append microphysics bounds to wrf_state_bounds
+sed -i "/'QCLOUD','0.0','NULL','CLAMP',/a \
+                             'QSNOW','0.0','NULL','CLAMP',\n\
+                             'QICE','0.0','NULL','CLAMP',\n\
+                             'QGRAUP','0.0','NULL','CLAMP',\n\
+                             'QNICE','0.0','NULL','CLAMP',\n\
+                             'QNRAIN','0.0','NULL','CLAMP'," input.nml
+
+# Radar microphysics setting
+sed -i "/ microphysics_type/c\   microphysics_type           =       3  ," input.nml
+sed -i "/'..\/..\/..\/observations\/forward_operators\/obs_def_gts_mod.f90'/a \                             '../../../observations/forward_operators/obs_def_QuikSCAT_mod.f90'," input.nml
+sed -i "/ cutoff/c\   cutoff                          = 0.10," input.nml
+sed -i "/ adaptive_localization_threshold/c\   adaptive_localization_threshold = 2000," input.nml
+sed -i "/ print_every_nth_obs/c\   print_every_nth_obs             = 1000," input.nml
+sed -i "/ input_qc_threshold/c\   input_qc_threshold          = 4.0," input.nml
+
+# &location_nml and &model_nml domain metrics
+sed -i "/ vert_normalization_pressure/c\   vert_normalization_pressure = 700000.0," input.nml
+sed -i "/ vert_normalization_height/c\   vert_normalization_height   = 80000.0," input.nml
+sed -i "/ vert_normalization_scale_height/c\   vert_normalization_scale_height = 7.5," input.nml
+sed -i "/ nlon/c\   nlon                        = 221," input.nml
+sed -i "/ nlat/c\   nlat                        = 122," input.nml
+sed -i "/ center_search_half_length/c\   center_search_half_length   = 400000.0," input.nml
+sed -i "/ circulation_radius/c\   circulation_radius          = 72000.0," input.nml
+sed -i "/ center_spline_grid_scale/c\   center_spline_grid_scale    = 4," input.nml
+sed -i "/ vert_localization_coord/c\   vert_localization_coord     = 4," input.nml
+
+sed -i "/ obs_boundary/c\   obs_boundary             = 5.0," input.nml
+sed -i "/ increase_bdy_error/c\   increase_bdy_error       = .true.," input.nml
+sed -i "/ obsdistbdy/c\   obsdistbdy               = 15.0," input.nml
+sed -i "/ sfc_elevation_check/c\   sfc_elevation_check      = .true.," input.nml
+sed -i "/ sfc_elevation_tol/c\   sfc_elevation_tol        = 300.0," input.nml
+sed -i "/ obs_pressure_top/c\   obs_pressure_top         = 10000.0," input.nml
+sed -i "/ obs_height_top/c\   obs_height_top           = 20000.0," input.nml
+sed -i "/ aircraft_horiz_int/c\   aircraft_horiz_int       = 60.0," input.nml
+sed -i "/ aircraft_pres_int/c\   aircraft_pres_int        = 2500.0," input.nml
+sed -i "/ sat_wind_horiz_int/c\   sat_wind_horiz_int       = 90.0," input.nml
+sed -i "/ sat_wind_pres_int/c\   sat_wind_pres_int        = 2500.0," input.nml
+sed -i "/ overwrite_ncep_satwnd_qc/c\   overwrite_ncep_satwnd_qc = .true.," input.nml
+sed -i "/ overwrite_obs_time/c\   overwrite_obs_time       = .true.," input.nml
+
+sed -i '/&closest_member_tool_nml/a \   input_file_name         = '\''filter_ic_new'\'',' input.nml
+sed -i '/&utilities_nml/a \   print_debug = .true.,' input.nml
+sed -i '/&mpi_utilities_nml/a \   reverse_task_layout = .false.' input.nml
+sed -i '/&prep_bufr_nml/a \   obs_window     = -1.,\n   obs_window_sfc = 0.8,' input.nml
+sed -i '/&obs_sequence_tool_nml/a \   filename_seq_list    = '\''obs_list'\'',\n   gregorian_cal        = .true.,\n   edit_copies          = .true.,\n   new_copy_index       = 1, 2, 3, 4, 5,\n   synonymous_copy_list = '\'''\'',\n   synonymous_qc_list   = '\'''\'',' input.nml
+
+cat << 'EOF' >> input.nml
+
+&assim_model_nml
+   write_binary_restart_files = .true.
+   /
+
+&convert_gpsro_bufr_nml
+   gpsro_bufr_file     = 'nam.gpsro.bufr',
+   gpsro_bufr_filelist = '',
+   gpsro_out_file      = 'obs_seq.gpsro',
+   gpsro_aux_file      = 'convinfo.txt',
+   ray_htop            = 20000.0,
+   ray_hbot            =  3000.0
+   overwrite_obs_error = .false.,
+   convert_to_geopotential_height = .true.,
+   obs_window_hr       = 1.5,
+   debug = .false.
+   /
+EOF
+
 echo "Linking initial wrfinput files from ${ENS_FCST_DIR}/e001/wrfout_d01_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00"
 ln -sf "${ENS_FCST_DIR}/e001/wrfout_d01_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d01
 ln -sf "${ENS_FCST_DIR}/e001/wrfout_d02_${ccyy_s}-${mm_s}-${dd_s}_${hh_s}:00:00" wrfinput_d02
 
-if [ "$ADAPTIVE_INFLATION" = "1" ]; then
+if [ "$ADAPTIVE_INFLATION" -ge 1 ]; then
     echo "Initial adaptive inflation"
     ln -sf "$DART_DIR/models/wrf/work/fill_inflation_restart" .
     
@@ -108,6 +193,7 @@ done
 ####################
 
 current_date="$start_date"
+# current_date="201507140600"
  
 echo
 echo "Starting DART cycling from ${start_date} to ${end_date} every ${cycle_period} hours"
@@ -154,8 +240,8 @@ while [[ "$current_date" -le "$end_date" ]]; do
         inf_sd_initial_from_restart=".true."
         
         for dom in d01 d02; do
-            ln -sf "${WORK_DIR}/output/${ccyy_p}${mm_p}${dd_p}${hh_p}/Inflation_input/output_priorinf_mean_${dom}.nc" input_priorinf_mean_${dom}.nc
-            ln -sf "${WORK_DIR}/output/${ccyy_p}${mm_p}${dd_p}${hh_p}/Inflation_input/output_priorinf_sd_${dom}.nc" input_priorinf_sd_${dom}.nc
+            ln -sf "${WORK_DIR}/output/${ccyy_p}${mm_p}${dd_p}${hh_p}/Inflation_input/input_priorinf_mean_${dom}.nc" input_priorinf_mean_${dom}.nc
+            ln -sf "${WORK_DIR}/output/${ccyy_p}${mm_p}${dd_p}${hh_p}/Inflation_input/input_priorinf_sd_${dom}.nc" input_priorinf_sd_${dom}.nc
         done
     fi
 
@@ -258,8 +344,8 @@ EOF
 cat >> input.nml <<EOF
 
 &quality_control_nml
-   input_qc_threshold       = 10.0,
-   outlier_threshold        = 10.0,
+   input_qc_threshold       = -1,
+   outlier_threshold        = -1,
    enable_special_outlier_code = .false.
 /
 EOF
@@ -283,6 +369,7 @@ cycle="${ccyy_c}${mm_c}${dd_c}${hh_c}"
 if [ "$cycle" = "2015071409" ] || [ "$cycle" = "2015071412" ]; then
     ASSIM_OBS_TYPE="'RADIOSONDE_U_WIND_COMPONENT','RADIOSONDE_V_WIND_COMPONENT','RADIOSONDE_TEMPERATURE','RADIOSONDE_SPECIFIC_HUMIDITY'"
     EVAL_OBS_TYPE=""
+
 else
     ASSIM_OBS_TYPE="'RADIOSONDE_TEMPERATURE','RADIOSONDE_U_WIND_COMPONENT','RADIOSONDE_V_WIND_COMPONENT','RADIOSONDE_SPECIFIC_HUMIDITY','RADIOSONDE_SURFACE_ALTIMETER','ACARS_U_WIND_COMPONENT','ACARS_V_WIND_COMPONENT','ACARS_TEMPERATURE','ACARS_DEWPOINT','SAT_U_WIND_COMPONENT','SAT_V_WIND_COMPONENT','GPSRO_REFRACTIVITY','PROFILER_U_WIND_COMPONENT','PROFILER_V_WIND_COMPONENT','METAR_U_10_METER_WIND','METAR_V_10_METER_WIND','METAR_TEMPERATURE_2_METER','METAR_DEWPOINT_2_METER','METAR_ALTIMETER', 'METAR_SPECIFIC_HUMIDITY_2_METER','MARINE_SFC_U_WIND_COMPONENT','MARINE_SFC_V_WIND_COMPONENT','MARINE_SFC_TEMPERATURE','MARINE_SFC_ALTIMETER','MARINE_SFC_DEWPOINT','LAND_SFC_TEMPERATURE','LAND_SFC_U_WIND_COMPONENT','LAND_SFC_V_WIND_COMPONENT','LAND_SFC_ALTIMETER','LAND_SFC_SPECIFIC_HUMIDITY'"
     EVAL_OBS_TYPE="'LAND_SFC_DEWPOINT'"
@@ -410,12 +497,31 @@ echo "Computing obs_epoch"
 EOF
 
     chmod +x run_filter
-    echo "Submitted run_filter job on chipilskigroup_q and waiting for completion..."
 
-    FILTER_JOBID=$(sbatch --parsable --wait run_filter) || {
-        echo "ERROR: Filter job failed"
+    FILTER_JOBID=$(sbatch --parsable run_filter)
+    
+    if [[ -z "$FILTER_JOBID" ]]; then
+        echo "ERROR: Filter job failed to submit"
         exit 1
-    }
+    fi
+
+    echo "Filter job ${FILTER_JOBID} submitted. Waiting for completion..."
+
+    while :; do
+        still_in_queue=$(squeue -h -j "${FILTER_JOBID}" -o "%i" 2>/dev/null | wc -l)
+        if (( still_in_queue == 0 )); then
+            echo "Filter job ${FILTER_JOBID} has left the queue."
+            break
+        fi
+        sleep 5
+    done
+
+    # echo "Submitted run_filter job on chipilskigroup_q and waiting for completion..."
+
+    # FILTER_JOBID=$(sbatch --parsable --wait run_filter) || {
+    #     echo "ERROR: Filter job failed"
+    #     exit 1
+    # }
 
     echo "Filter completed for cycle at ${ccyy_c}${mm_c}${dd_c}${hh_c}${nn_c}."
     
@@ -495,7 +601,7 @@ EOF
     # Adaptive inflation file moves
     ##############################
 
-    if [ "$ADAPTIVE_INFLATION" = "1" ]; then
+    if [ "$ADAPTIVE_INFLATION" -ge 1 ]; then
         for dom in d01 d02; do
             old_file=( input_postinf_mean_${dom}.nc input_postinf_sd_${dom}.nc input_priorinf_mean_${dom}.nc input_priorinf_sd_${dom}.nc )
             new_file=( output_postinf_mean_${dom}.nc output_postinf_sd_${dom}.nc output_priorinf_mean_${dom}.nc output_priorinf_sd_${dom}.nc )
@@ -537,7 +643,7 @@ EOF
             FILE_DATE_P=${ccyy_p}-${mm_p}-${dd_p}_${hh_p}:${nn_p}:00
             
             if [[ ${current_date} == "${start_date}" ]]; then
-                cp ${ENS_WRF_DIR}/$CMEM/wrfout_d0${dom}_${FILE_DATE} ${WORK_DIR}/analysis/wrfvar_output_d0${dom}.${CMEM} || exit 1
+                cp ${ENS_FCST_DIR}/$CMEM/wrfout_d0${dom}_${FILE_DATE} ${WORK_DIR}/analysis/wrfvar_output_d0${dom}.${CMEM} || exit 1
             else
                 ln -sf ${WORK_DIR}/output/${ccyy_p}${mm_p}${dd_p}${hh_p}/WRFIN/${CMEM}/wrfout_d0${dom}_${FILE_DATE} ${WORK_DIR}/analysis/wrfvar_output_d0${dom}.${CMEM} || exit 1
             fi
@@ -549,18 +655,14 @@ EOF
         # ------------------------------------------------------------------------------
         # UPDATE BOUNDARIES USING PERT_WRF_BC
         # ------------------------------------------------------------------------------
-        # 1. Copy (do not symlink) the raw boundary file and make it writable
         cp ${ENS_DIR}/rc/2015071300/wrfbdy_d01.${CMEM} ./wrfbdy_d01 || exit 1
         chmod u+w ./wrfbdy_d01
         
-        # 2. Run pert_wrf_bc for this specific member in its isolated directory
         echo "Running pert_wrf_bc to update boundaries for ${CMEM}..."
         ln -sf "${WORK_DIR}/input.nml" .
         "${WORK_DIR}/pert_wrf_bc" > pert_wrf_bc.log 2>&1
         
-        # 3. Copy the updated boundary file back to the analysis directory for staging
         cp ./wrfbdy_d01 "${WORK_DIR}/analysis/wrfbdy_d01.${CMEM}"
-        # ------------------------------------------------------------------------------
 
         cp "${SCRIPTS_DIR}/advance_run.sh" advance_run.sh || exit 1
         sed -i "s/^[[:space:]]*DE_FCST_RANGE=.*/DE_FCST_RANGE=${cycle_period}/" advance_run.sh
@@ -571,6 +673,8 @@ EOF
         
         jid=$(sbatch \
             --parsable \
+            --requeue \
+            --mem-per-cpu="${CYCLE_FCST_SBATCH_MEM}" \
             --job-name="wrf_${CMEM}_${ccyy_c}${mm_c}${dd_c}${hh_c}" \
             --output="wrf_${CMEM}_${ccyy_c}${mm_c}${dd_c}${hh_c}_%j.log" \
             advance_run.sh "${start_time}" "${end_time}")
