@@ -6,9 +6,9 @@ This documentation details the methods, implementations, and techniques required
 
 ## Experiment Summary
 
-* **Objective:** Assimilation of synthetic and real NCEP BUFR observations).
+* **Objective:** Assimilation of synthetic and real NCEP BUFR observations.
 * **Timeframe:** July 13, 00:06 UTC to July 14, 00:90 UTC.
-* **Ensemble Size:** Utilizes `randomcv` from WRFDA to generate 50 randomly perturbed ensemble members.
+* **Ensemble Size:** Utilizes `randomcv` from WRFDA to generate 50 randomly perturbed ensemble.
 
 ---
 
@@ -16,7 +16,7 @@ This documentation details the methods, implementations, and techniques required
 
 The project is organized into several files where a primary driver script executes sub-level scripts to complete specific tasks. Required technical competencies and environments include:
 
-* **Scripting:** Proficiency in Shell scripting (bash/ksh) and Python for driver execution and data acquisition.
+* **Scripting:** Proficiency in Shell scripting and Python for driver execution and data acquisition.
 * **Compilers:** Access to Intel Compilers to compile WPS, WRF, and WRFDA from source.
 * **Environment Management:** A Conda environment configured to install and run the ERA5 API client.
 * **Job Scheduling:** Configuration of parameter files (e.g., `param.sh`) to align with device and scheduler requirements.
