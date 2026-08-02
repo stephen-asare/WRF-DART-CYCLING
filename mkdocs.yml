@@ -6,7 +6,7 @@ theme:
 docs_dir: docs
 
 nav:
-  - Introduction: intro.md
+  - Introduction: index.md
   - Building Models: building_models.md
   - Experiment Setup: experiment_setup.md
   - Data Download: data_download.md
