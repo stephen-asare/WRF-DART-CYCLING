@@ -8,7 +8,7 @@ conda create -n python311_env python=3.11 -y
 conda activate python311_env
 conda install conda-forge::cdsapi
 ```
-
+Now, if you do not have an account at ECMWF Climate Data Store, please [register]([url](https://cds.climate.copernicus.eu/how-to-api#)) one, if you have simply [login]([url](https://cds.climate.copernicus.eu/how-to-api#). Once you log in from here, copy the code that would be didOnce logged in, copy the code displayed below to the file `$HOME/.cdsapirc`
 ```
 python3 era_api_new_pl.py
 python3 era_api_new_sf.py
