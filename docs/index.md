@@ -6,9 +6,8 @@ This documentation details the methods, implementations, and techniques required
 
 ## Experiment Summary
 
-* **Objective:** Assimilation of water vapor profiles (or synthetic/real NCEP BUFR observations).
-* **Timeframe:** July 14, 12:00 UTC to July 15, 12:00 UTC.
-* **Reference Literature:** Reproduces the ensemble cycle assimilation methodology described by Junkyung et al., 2022.
+* **Objective:** Assimilation of synthetic and real NCEP BUFR observations).
+* **Timeframe:** July 13, 00:06 UTC to July 14, 00:90 UTC.
 * **Ensemble Size:** Utilizes `randomcv` from WRFDA to generate 50 randomly perturbed ensemble members.
 
 ---
