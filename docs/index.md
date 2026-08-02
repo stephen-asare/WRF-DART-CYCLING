@@ -29,7 +29,7 @@ The project is organized into several files where a primary driver script execut
 The workflow dynamically downscales global reanalysis data to generate Initial and Lateral Boundary Conditions (IC/BCs).
 
 * **Atmospheric Reanalysis:** 4th generation atmospheric reanalyses (ERA5) produced by the European Centre for Medium-Range Weather Forecasts (ECMWF).
-* **Data Acquisition:** Automated retrieval using the provided Python scripts (`download_era_5_pl.py` and `download_era_5_sf.py`).
+* **Data Acquisition:** Automated retrieval using the provided Python scripts (`download_prepbufr.sh`, `download_era_5_pl.py` and `download_era_5_sf.py`).
 
 ---
 
