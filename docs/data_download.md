@@ -21,7 +21,7 @@ conda deactivate
 This should create a directory for the ERA5 data and store them there appropraitely.
 
 ## Downloading WPS data
-We require a mandatory and optional static data for wrf to run. More information on the static data can be found in [WRF Preprocessing System (WPS) Geographical Input Data Mandatory Fields Downloads]{https://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html}
+We require a mandatory and optional static data for wrf to run. More information on the static data can be found in [WRF Preprocessing System (WPS) Geographical Input Data Mandatory Fields Downloads](https://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html)
 
 **NB** Create a directory for WPS geographic data and download the all static data into, then configure the `param.sh` to the directory created.
 
