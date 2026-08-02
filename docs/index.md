@@ -9,7 +9,7 @@ This documentation details the methods, implementations, and techniques required
 * **Objective:** Assimilation of water vapor profiles (or synthetic/real NCEP BUFR observations).
 * **Timeframe:** July 14, 12:00 UTC to July 15, 12:00 UTC.
 * **Reference Literature:** Reproduces the ensemble cycle assimilation methodology described by Junkyung et al., 2022.
-* **Ensemble Size:** Utilizes `randomcv` from WRFDA to generate 40 randomly perturbed ensemble members.
+* **Ensemble Size:** Utilizes `randomcv` from WRFDA to generate 50 randomly perturbed ensemble members.
 
 ---
 
@@ -35,9 +35,9 @@ The workflow dynamically downscales global reanalysis data to generate Initial a
 
 ## Hardware & Storage Requirements
 
-Executing a 40-member WRF-DART ensemble cycle is computationally demanding. Baseline recommendations include:
+Executing a 50-member WRF-DART ensemble cycle is computationally demanding. Baseline recommendations include:
 
-* **Storage Space:** At least **2 to 5 Terabytes (TB)** of high-speed scratch storage. WRF input, boundary, and output files for 40 ensemble members over multiple cycles will consume storage rapidly.
+* **Storage Space:** At least **2 to 5 Terabytes (TB)** of high-speed scratch storage. WRF input, boundary, and output files for 50 ensemble members over multiple cycles will consume storage rapidly.
 * **Compute (CPU):** A high-performance cluster with at least **128 to 256 cores** for parallel processing (MPI) during the ensemble forecasts and DART assimilation steps.
 * **Memory (RAM):** A minimum of **4 to 8 GB of RAM per core**, depending on your domain's grid spacing and vertical levels. 
 
