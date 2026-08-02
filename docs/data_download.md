@@ -10,6 +10,7 @@ conda install conda-forge::cdsapi
 ```
 Now, if you do not have an account at ECMWF Climate Data Store, please [register](https://cds.climate.copernicus.eu/how-to-api#) one, if you have simply [login](https://cds.climate.copernicus.eu/how-to-api#). Then Once you log in from here, copy the code that would be displaced. Create file `cdsapirc` in your home directory and paste the code into the file `$HOME/.cdsapirc`
 ```
+source param.sh
 python3 era_api_new_pl.py
 python3 era_api_new_sf.py
 ```
