@@ -195,6 +195,8 @@ cd models/wrf/work
 ```
 Once finished, ensure the filter executable has been generated in your `models/wrf/work directory.`
 
+Now we want to build other DART tools we will require for the experiments `advance_time`, `create_real_obs`, `obs_sequence_tool`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
+
 <!-- # Compiling METplus
 **NB** Installing MET can be skipped for now since its not used in the current experiment.
 Create new directory to install package: 
