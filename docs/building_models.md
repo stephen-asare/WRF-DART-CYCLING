@@ -212,7 +212,7 @@ This should create `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_se
 Lastly
 ```
 cd "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/
-./install
+./install.sh
 ls exe/
 ```
 This should display `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
