@@ -196,6 +196,28 @@ cd models/wrf/work
 Once finished, ensure the filter executable has been generated in your `models/wrf/work directory.`
 
 Now we want to build other DART tools we will require for the experiments `advance_time`, `create_real_obs`, `obs_sequence_tool`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
+```
+cd "${DART_DIR}/observations/obs_converters/NCEP/ascii_to_obs/work/
+./quickbuild.sh
+ls
+```
+You should see create `create_real_obs` in the directory.
+```
+cd ${DART_DIR}/models/wrf/work
+./quickbuild.sh
+ls
+```
+This should create `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_seq_to_netcdf`, `pert_wrf_bc` `obs_diag`, `create_obs_sequence` and the other tools we will require.
+
+Lastly
+```
+cd "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/
+./install
+ls exe/
+```
+This should display `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
+
+
 
 <!-- # Compiling METplus
 **NB** Installing MET can be skipped for now since its not used in the current experiment.
