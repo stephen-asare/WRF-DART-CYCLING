@@ -164,8 +164,8 @@ var/build/
 cd ../DART
 ```
 Clone the repository:
-```
-git clone --branch v11.21.2 --single-branch [https://github.com/NCAR/DART.git](https://github.com/NCAR/DART.git)
+```bash
+git clone --branch v11.21.2 --single-branch https://github.com/NCAR/DART.git v11.21.2
 ```
 Load required modules:
 ```
