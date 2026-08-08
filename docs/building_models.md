@@ -138,7 +138,68 @@ var/build/
 ---
 
 ### Building the WRF Preprocessing System (WPS)
-## Purpose
+WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.
+Clone WPS into the $MODEL_DIR directory.
+```
+cd $MODEL_DIR
+mkdir WPS && cd WPS
+git clone --branch v4.5 --single-branch https://github.com/wrf-model/WPS.git v4.5
+cd v4.5
+```
+You can check the tag to be sure you have the correct version.
+```
+git describe --tags --exact-match
+```
+This should display
+```
+v4.5
+```
+Load the required modules:
+```bash
+module load intel/25
+module load hdf5/1.10.4
+module load netcdf/4.7.0
+```
+Export dependent libraries
+```
+export NETCDF=/opt/rcc/intel/openmpi
+export HDF5=/opt/rcc/intel/hdf5-1.10.4
+export JASPERLIB=/usr/lib64
+export JASPERINC=/usr/include/jasper
+export WRF_DIR=../../WRF/v4.6.1 
+```
+**NB** WPS v4.5 does not have a built-in option for ifx/icx, so we have to change the compilers in WPS's "blueprint" file to replace ifort/icc with ifx/icx before running the configuration script.
+```
+sed -i 's/ifort/ifx/g' arch/configure.defaults
+sed -i 's/icc/icx/g' arch/configure.defaults
+```
+Configure WPS in v4.5 directory
+```
+./configure
+```
+Choose **19**, Linux x86_64, Intel compiler (dmpar)
+Option **19** hardcodes the older Intel compilers (ifort and icc). However, the Intel/25 module completely dropped those older compilers in favor of the newer oneAPI LLVM compilers (ifx and icx).
+
+The new Intel oneAPI icx compiler is based on modern LLVM/Clang, which is much stricter about old C code. WPS version 4.5 contains legacy C code files (like cio.c) that don't include modern C headers.
+The new icx compiler treats these old syntaxes (like "implicit function declarations") as fatal errors and refuses to compile. Hence, we pass a few flags to icx telling it to treat those old C strictness rules as warnings instead of errors.
+```
+sed -i 's/^CFLAGS.*/& -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wps
+```
+Compile
+```
+./compile 2>&1 | tee compile_wps.log
+```
+In the build directory configure WPS
+```
+./configure
+```
+
+
+
+
+
+
+
 The initial step is to produce the initial and boundary conditions by running the WPS components (`ungrib.exe`, `geogrid.exe`, and `metgrid.exe`). These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.
 ## Source and Documentation
 * NCAR WPS GitHub Repository: https://github.com/wrf-model/WPS
@@ -169,6 +230,8 @@ Select:
 ```text
 17. Linux x86_64, Intel compiler (serial)
 ```
+
+
 Compile WPS:
 ```bash
 ./compile >& compile.log
