@@ -2,11 +2,9 @@
 This section provides step-by-step instructions for downloading the source code, loading the necessary environment modules, and compiling the atmospheric models required for the experiment.
 
 ### Build custom libraries
-First we need to build custom PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS libraries using RCC system Intel/25, OpenMPI 4.1.0, HDF5 and NetCDF. Create a directory for models installation, in model directory create folder `NETCDF`.
-```bash
-mkdir -p models/NETCDF
-```
-Open `rcc_build_stack.sh`, and configure directory for models `MODEL_DIR` (where you want the models to be installed).
+First we need to build custom PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS libraries using RCC system Intel/25, OpenMPI 4.1.0, HDF5 and NetCDF.
+
+Open `rcc_build_stack.sh`, and configure directory for models `MODEL_DIR` (where you want the models to be installed). `rcc_build_stack.sh` will crete the model directory and build the custom libraries.
 Run `rcc_build_stack.sh` to build custom libraries.
 ```bash
 nohup ./rcc_build_stack.sh >& compile.log &
