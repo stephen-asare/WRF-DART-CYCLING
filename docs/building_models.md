@@ -56,7 +56,7 @@ Execute the configuration script
 ```
 Enter **78** ((dmpar) INTEL (ifx/icx) : oneAPI LLVM) for Compiler Selection and **1** (basic) for Nesting Selection.
 Verify that the output summary ends with:
-```
+```text
 *****************************************************************************
 This build of WRF will use NETCDF4 with HDF5 compression
 *****************************************************************************
@@ -70,7 +70,7 @@ This may take a while when compilation completes, check the main/ directory for 
 ls -l main/*.exe
 ```
 If you see these below, you successfully compiled WRF-ARW
-```
+```text
 wrf.exe 
 real.exe
 ndown.exe
@@ -137,18 +137,18 @@ var/build/
 ### Building the WRF Preprocessing System (WPS)
 WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.
 Clone WPS into the $MODEL_DIR directory.
-```
+```bash
 cd $MODEL_DIR
 mkdir WPS && cd WPS
 git clone --branch v4.7.0 --single-branch https://github.com/wrf-model/WPS.git v4.7.0
 cd v4.7.0
 ```
 You can check the tag to be sure you have the correct version.
-```
+```bash
 git describe --tags --exact-match
 ```
 This should display
-```
+```text
 v4.7.0
 ```
 Load the Environment Modules
@@ -214,7 +214,7 @@ ls -ls *.exe
 ### Building the Data Assimilation Research Testbed (DART)
 **Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
 **Source & Documentation:** [NCAR DART GitHub Repository](https://github.com/NCAR/DART) | [DART Documentation](https://docs.dart.ucar.edu/)
-```
+```bash
 cd $MODEL_DIR
 mkdir DART && cd DART
 ```
@@ -224,7 +224,7 @@ git clone --branch v11.21.2 --single-branch https://github.com/NCAR/DART.git v11
 cd v11.21.2
 ```
 Load required modules:
-```
+```bash
 module load intel/25 
 module load precompiled
 module load hdf5/1.10.4
@@ -241,51 +241,52 @@ cp mkmf.template.ifx.linux mkmf.template
 Now Update the Makefile Template
 Use you favorite editor to open the `mkmf.template` file. Update the NetCDF paths in the mkmf.template file specific to RCC system. 
 Change from:
-```
+```bash
 # NETCDF = /opt/local
 LIBS = -L$(NETCDF)/lib -lnetcdff -lnetcdf
 ```
 Change to:
-```
+```bash
 NETCDF = /opt/rcc/intel
 LIBS = -L$(NETCDF)/lib64 -lnetcdff -lnetcdf
 ```
 Build DART:
-```
+```bash
 cd $MODEL_DIR/DART/v11.21.2/models/wrf/work
 ./quickbuild.csh
 ```
 Once finished, this should create `filter`, `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_seq_to_netcdf`, `pert_wrf_bc` `obs_diag` and `create_obs_sequence` in the directory.
 
 Now we want to build other DART tools we will require for the experiments `create_real_obs`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
-```
-cd "$MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/work/
+```bash
+cd "$MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/work/"
 ./quickbuild.sh
 ls
 ```
 You should see create `create_real_obs` and `prepbufr_to_obs` in the directory.
-```
-Lastly
-```
+Lastly, we build the observation pre-processing tools for bufr files
+```bash
 cd $MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
 ```
 Replace `icc` and `ifort`with icx and ifx along with flags.
-```
+```bash
 sed -i 's/cc=icx/cc="icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion"/g' install.sh
 sed -i 's/ff=ifort/ff=ifx/g' install.sh
 ```
 Execute installation.
-```
+```bash
 CCOMP=intel FCOMP=intel ./install.sh
 ```
-```
+```bash
 ls exe/
 ```
 This should display `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
 
 ---
 
-<!-- # Compiling METplus
+
+<!-- 
+# Compiling METplus
 **NB** Installing MET can be skipped for now since its not used in the current experiment.
 Create new directory to install package: 
 ```
@@ -431,5 +432,5 @@ Add to environmental variable
 echo 'export MET_INSTALL_DIR="/gpfs/research/chipilskigroup/stephen_asare/models/MET/v12.1.1"' >> ~/.bashrc
 echo 'export PATH="$MET_INSTALL_DIR/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
-```
- -->
+``` -->
+
