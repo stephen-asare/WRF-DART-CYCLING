@@ -4,16 +4,19 @@ This section provides step-by-step instructions for downloading the source code,
 ### Build custom libraries
 First we need to build custom PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS libraries using RCC system Intel/25, OpenMPI 4.1.0, HDF5 and NetCDF.
 
-Open `rcc_build_stack.sh`, and configure directory for models `MODEL_DIR` (where you want the models to be installed). `rcc_build_stack.sh` will crete the model directory and build the custom libraries.
+Open `rcc_build_stack.sh`, and configure directory for models `MODEL_DIR` (where you want the models to be installed). The script `rcc_build_stack.sh` will create the model directory and build the custom libraries.
 Run `rcc_build_stack.sh` to build custom libraries.
 ```bash
 nohup ./rcc_build_stack.sh >& compile.log &
 ```
+Verify the log file to ensure the libraries successfully completed.
+
+---
 
 ### Building the Weather Research and Forecasting (WRF) Model
 Obtain the WRF-ARW v4.6.1 source code, initialize submodules in the cloning process to ensure all internal dependencies are downloaded. Model directory should be created already from compiling the custom libraries above, simply change directory to that directory
 ```bash
-cd models
+cd $MODEL_DIR
 mkdir WRF
 git clone --branch v4.6.1 --recurse-submodules https://github.com/wrf-model/WRF.git WRF/v4.6.1
 cd WRF/v4.6.1
@@ -77,7 +80,64 @@ For more on compiling WRF, refer to the official documentation [WRF Compilation 
 
 ---
 
-# Building the WRF Preprocessing System (WPS)
+
+# Building WRF Data Assimilation (WRFDA)
+## Purpose
+WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, WRFDA's `randomcv` utility is used to create randomly perturbed ensemble members.
+## Source and Documentation
+WRFDA is distributed as part of the WRF repository:
+* NCAR WRF GitHub Repository: https://github.com/wrf-model/WRF
+## Download and Compile WRFDA
+Clone the repository:
+```bash
+cd $MODEL_DIR
+mkdir WRFDA
+git clone --branch v4.6.1 --recurse-submodules https://github.com/wrf-model/WRF.git WRFDA/v4.6.1
+cd WRFDA/v4.6.1
+```
+Load the required modules:
+```bash
+module purge
+module load intel/25
+module load openmpi/4.1.0
+module load hdf5/1.10.4
+module load netcdf/4.7.0
+```
+Set the environment variables:
+```bash
+export NETCDF=/opt/rcc/intel/openmpi
+export HDF5=/opt/rcc/intel/hdf5-1.10.4
+export PNETCDF=/gpfs/home/sa24m/stephen_asare/models_new/NETCDF
+export NETCDF4=1
+export WRFIO_NETCDF4_FILE_SUPPORT=1
+export WRFIO_NCD_LARGE_FILE_SUPPORT=1
+export WRF_EM_CORE=1
+export WRF_DA_CORE=1
+export MP_STACK_SIZE=64000000
+export CPPFLAGS="-I$NETCDF/include -I$HDF5/include -I$PNETCDF/include $CPPFLAGS"
+export LDFLAGS="-L$NETCDF/lib64 -L$HDF5/lib64 -L$PNETCDF/lib $LDFLAGS"
+export LD_LIBRARY_PATH=$NETCDF/lib64:$HDF5/lib64:$PNETCDF/lib:$LD_LIBRARY_PATH
+```
+Navigate into the WRFDA directory and configure:
+```bash
+./configure wrfda
+```
+You should see the file `configure.wrf`.
+```text
+Enter **78** ((dmpar) INTEL (ifx/icx) : oneAPI LLVM) for Compiler Selection and **1** (basic) for Nesting Selection.
+```
+Compile WRFDA:
+```bash
+./compile all_wrfvar >& compile.out
+ls -ls var/build/*.exe
+```
+After successful compilation, the WRFDA executables will be available in:
+```text
+var/build/
+```
+---
+
+### Building the WRF Preprocessing System (WPS)
 ## Purpose
 The initial step is to produce the initial and boundary conditions by running the WPS components (`ungrib.exe`, `geogrid.exe`, and `metgrid.exe`). These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.
 ## Source and Documentation
@@ -122,52 +182,6 @@ metgrid.exe
 ```
 ---
 
-# Building WRF Data Assimilation (WRFDA)
-## Purpose
-WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, WRFDA's `randomcv` utility is used to create 40 randomly perturbed ensemble members.
-## Source and Documentation
-WRFDA is distributed as part of the WRF repository:
-* NCAR WRF GitHub Repository: https://github.com/wrf-model/WRF
-## Download and Compile WRFDA
-Clone the repository:
-```bash
-git clone --recurse-submodules https://github.com/wrf-model/WRF WRFDA
-```
-Load the required modules:
-```bash
-module load intel/21
-module load openmpi/4.1.0
-module load hdf5/1.10.4
-module load netcdf/4.7.0
-```
-Set the environment variables:
-```bash
-export WRF_EM_CORE=1
-export WRF_DA_CORE=1
-export MP_STACK_SIZE=64000000
-
-export NETCDF=/gpfs/home/junkyung_ucar_edu/Build_WRF/NETCDF
-export HDF5=/gpfs/home/junkyung_ucar_edu/Build_WRF/HDF5
-```
-Navigate into the WRFDA directory and configure:
-```bash
-cd WRFDA
-./configure wrfda
-```
-You should see the file `configure.wrf`.
-Select:
-```text
-15. Intel (dmpar)
-```
-Compile WRFDA:
-```bash
-./compile all_wrfvar >& compile.out
-ls -ls var/build/*.exe
-```
-After successful compilation, the WRFDA executables will be available in:
-```text
-var/build/
-```
 
 # Building the Data Assimilation Research Testbed (DART)
 **Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
