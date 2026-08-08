@@ -81,7 +81,7 @@ For more on compiling WRF, refer to the official documentation [WRF Compilation 
 
 ### Building WRF Data Assimilation (WRFDA)
 WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, we intend to use WRFDA's `randomcv` utility to create randomly perturbed ensemble members. WRFDA is distributed as part of the WRF repository: NCAR WRF GitHub Repository: [WRF-ARW](https://github.com/wrf-model/WRF). \\
-Download and Compile WRFDA\\
+Download and Compile WRFDA \\
 Clone the repository:
 ```bash
 cd $MODEL_DIR
@@ -132,7 +132,7 @@ var/build/
 ---
 
 ### Building the WRF Preprocessing System (WPS)
-WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment. \\
+WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment. \
 Clone WPS into the $MODEL_DIR directory.
 ```bash
 cd $MODEL_DIR
