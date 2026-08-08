@@ -14,7 +14,7 @@ Verify the log file to ensure the libraries successfully completed.
 ---
 
 ### Building the Weather Research and Forecasting (WRF) Model
-Obtain the WRF-ARW v4.6.1 source code, initialize submodules in the cloning process to ensure all internal dependencies are downloaded. Model directory should be created already from compiling the custom libraries above, simply change directory to that directory
+Obtain the WRF-ARW v4.6.1 source code, initialize submodules in the cloning process to ensure all internal dependencies are downloaded. Model directory should be created already from compiling the custom libraries above, simply change directory to that directory. If you already libraries, PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS without using `rcc_build_stack.sh` above, simply create a directory $MODEL_DIR where all the models will be compiled.
 ```bash
 cd $MODEL_DIR
 mkdir WRF
@@ -211,30 +211,38 @@ Check for `geogrid.exe`, `metgrid.exe` and `ungrib.exe`.
 ls -ls *.exe
 ```
 
-# Building the Data Assimilation Research Testbed (DART)
+### Building the Data Assimilation Research Testbed (DART)
 **Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
 **Source & Documentation:** [NCAR DART GitHub Repository](https://github.com/NCAR/DART) | [DART Documentation](https://docs.dart.ucar.edu/)
 ```
-cd ../DART
+cd $MODEL_DIR
+mkdir DART && cd DART
 ```
 Clone the repository:
 ```bash
 git clone --branch v11.21.2 --single-branch https://github.com/NCAR/DART.git v11.21.2
+cd v11.21.2
 ```
 Load required modules:
 ```
-module load python/3
-module load matlab/2022b
+module load intel/25 
 module load precompiled
-module load intel/21
 module load hdf5/1.10.4
-module load mvapich/2.3.5
 module load netcdf/4.7.0
+module load mvapich/2.3.7
+module load matlab/2022b
+module load python/3
 ```
-Update the Makefile Template:Before building, you must update the NetCDF paths in the mkmf.template file specific to your system.Open `build_templates/mkmf.template` and locate the NetCDF definitions.
+Change directory to `build_templates`.
+Copy the ifx template to the default name DART looks for:
+```Bash
+cp mkmf.template.ifx.linux mkmf.template
+```
+Now Update the Makefile Template
+Use you favorite editor to open the `mkmf.template` file. Update the NetCDF paths in the mkmf.template file specific to RCC system. 
 Change from:
 ```
-NETCDF = /opt/local
+# NETCDF = /opt/local
 LIBS = -L$(NETCDF)/lib -lnetcdff -lnetcdf
 ```
 Change to:
@@ -244,33 +252,33 @@ LIBS = -L$(NETCDF)/lib64 -lnetcdff -lnetcdf
 ```
 Build DART:
 ```
-cd models/wrf/work
+cd $MODEL_DIR/DART/v11.21.2/models/wrf/work
 ./quickbuild.csh
 ```
-Once finished, ensure the filter executable has been generated in your `models/wrf/work directory.`
+Once finished, this should create `filter`, `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_seq_to_netcdf`, `pert_wrf_bc` `obs_diag` and `create_obs_sequence` in the directory.
 
-Now we want to build other DART tools we will require for the experiments `advance_time`, `create_real_obs`, `obs_sequence_tool`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
+Now we want to build other DART tools we will require for the experiments `create_real_obs`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
 ```
-cd "${DART_DIR}/observations/obs_converters/NCEP/ascii_to_obs/work/
+cd "$MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/work/
 ./quickbuild.sh
 ls
 ```
-You should see create `create_real_obs` in the directory.
+You should see create `create_real_obs` and `prepbufr_to_obs` in the directory.
 ```
-cd ${DART_DIR}/models/wrf/work
-./quickbuild.sh
-ls
-```
-This should create `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_seq_to_netcdf`, `pert_wrf_bc` `obs_diag`, `create_obs_sequence` and the other tools we will require.
-
 Lastly
 ```
-cd "${DART_DIR}/observations/obs_converters/NCEP/prep_bufr/
-./install.sh
-ls exe/
+cd $MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
+```
+Replace `icc` and `ifort`
+```
+sed -i 's/cc=icc/cc=icx/g' install.sh
+sed -i 's/ff=ifort/ff=ifx/g' install.sh
+```
+Execute installation.
+```
+CCOMP=intel FCOMP=intel ./install.sh
 ```
 This should display `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
-
 
 
 <!-- # Compiling METplus
