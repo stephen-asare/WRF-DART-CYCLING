@@ -269,17 +269,21 @@ Lastly
 ```
 cd $MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
 ```
-Replace `icc` and `ifort`
+Replace `icc` and `ifort`with icx and ifx along with flags.
 ```
-sed -i 's/cc=icc/cc=icx/g' install.sh
+sed -i 's/cc=icx/cc="icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion"/g' install.sh
 sed -i 's/ff=ifort/ff=ifx/g' install.sh
 ```
 Execute installation.
 ```
 CCOMP=intel FCOMP=intel ./install.sh
 ```
+```
+ls exe/
+```
 This should display `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
 
+---
 
 <!-- # Compiling METplus
 **NB** Installing MET can be skipped for now since its not used in the current experiment.
