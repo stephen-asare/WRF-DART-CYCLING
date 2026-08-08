@@ -139,6 +139,7 @@ Check that the following executables are available:
 ```text
 da_advance_time.exe
 da_wrfvar.exe
+da_update_bc
 ```
 ---
 
