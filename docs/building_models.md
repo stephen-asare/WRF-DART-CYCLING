@@ -107,7 +107,7 @@ Set the environment variables:
 ```bash
 export NETCDF=/opt/rcc/intel/openmpi
 export HDF5=/opt/rcc/intel/hdf5-1.10.4
-export PNETCDF=/gpfs/home/sa24m/stephen_asare/models_new/NETCDF
+export PNETCDF=../..//NETCDF
 export NETCDF4=1
 export WRFIO_NETCDF4_FILE_SUPPORT=1
 export WRFIO_NCD_LARGE_FILE_SUPPORT=1
@@ -143,8 +143,8 @@ Clone WPS into the $MODEL_DIR directory.
 ```
 cd $MODEL_DIR
 mkdir WPS && cd WPS
-git clone --branch v4.5 --single-branch https://github.com/wrf-model/WPS.git v4.5
-cd v4.5
+git clone --branch v4.7.0 --single-branch https://github.com/wrf-model/WPS.git v4.7.0
+cd v4.7.0
 ```
 You can check the tag to be sure you have the correct version.
 ```
@@ -152,99 +152,67 @@ git describe --tags --exact-match
 ```
 This should display
 ```
-v4.5
+v4.7.0
 ```
-Load the required modules:
+Load the Environment Modules
+Load the required compiler, MPI, and dependency modules for the build environment:
 ```bash
-module load intel/25
-module load hdf5/1.10.4
-module load netcdf/4.7.0
+module load intel/25 openmpi/4.1.0 hdf5/1.10.4 netcdf/4.7.0
 ```
-Export dependent libraries
-```
+Export Dependent Libraries
+Set the environment variables so the configuration script knows where to look for NetCDF, HDF5, and compression libraries, and specify the new Intel LLVM compiler wrappers (ifx/icx):
+```bash
 export NETCDF=/opt/rcc/intel/openmpi
 export HDF5=/opt/rcc/intel/hdf5-1.10.4
 export JASPERLIB=/usr/lib64
 export JASPERINC=/usr/include/jasper
-export WRF_DIR=../../WRF/v4.6.1 
+export WRF_DIR=../../WRF/v4.6.1
+export OMPI_FC=ifx
+export OMPI_CC=icx
+export OMPI_CXX=icpx
 ```
-**NB** WPS v4.5 does not have a built-in option for ifx/icx, so we have to change the compilers in WPS's "blueprint" file to replace ifort/icc with ifx/icx before running the configuration script.
+Clean the Environment and Patch the Configuration Defaults
+Ensure the workspace is clean. NB: WPS does not have a built-in option for the newer ifx/icx compilers, so we must change the compilers in WPS's "blueprint" file to replace the old mpicx wrappers with mpicc before running the configuration script.
+```bash
+./clean -a
+sed -i 's/mpicx/mpicc/g' arch/configure.defaults
 ```
-sed -i 's/ifort/ifx/g' arch/configure.defaults
-sed -i 's/icc/icx/g' arch/configure.defaults
-```
-Configure WPS in v4.5 directory
-```
+Configure WPS
+Run the configuration script to generate configure.wps:
+```bash
 ./configure
 ```
-Choose **19**, Linux x86_64, Intel compiler (dmpar)
-Option **19** hardcodes the older Intel compilers (ifort and icc). However, the Intel/25 module completely dropped those older compilers in favor of the newer oneAPI LLVM compilers (ifx and icx).
+Choose 19, Linux x86_64, Intel compiler (dmpar) Note: Option 19 natively hardcodes the older Intel compilers (ifort and icc). However, the Intel/25 module completely dropped those older compilers in favor of the newer oneAPI LLVM compilers (ifx and icx).
 
-The new Intel oneAPI icx compiler is based on modern LLVM/Clang, which is much stricter about old C code. WPS version 4.5 contains legacy C code files (like cio.c) that don't include modern C headers.
-The new icx compiler treats these old syntaxes (like "implicit function declarations") as fatal errors and refuses to compile. Hence, we pass a few flags to icx telling it to treat those old C strictness rules as warnings instead of errors.
+Patch Compiler Warnings and Linker Paths
+Because we are using newer LLVM compilers, several strict C standards and library structures need to be patched in the generated configure.wps file.
+Suppress strict C compiler errors that would otherwise halt the compilation of older WPS C-routines:
+```bash
+sed -i 's/^SCC.*/& -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wps
+sed -i 's/^CCOMP.*/& -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wps
+sed -i 's/^DM_CC.*/& -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wps
 ```
-sed -i 's/^CFLAGS.*/& -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wps
+Fix the NetCDF library path (modern NetCDF installs into lib64 instead of lib):
+```bash
+sed -i 's|-L$(NETCDF)/lib|-L$(NETCDF)/lib64|g' configure.wps
 ```
-Compile
+Explicitly link the NetCDF-Fortran (-lnetcdff) library, as well as its underlying dependencies (parallel HDF5 and Zlib) to avoid undefined reference to H5P... errors:
+```bash
+sed -i 's|-lnetcdf|-lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lm -lz|g' configure.wps
 ```
+Prevent Environment Interference and Compile
+The openmpi module exports an environment variable named MPI_LIB as a raw directory path (/opt/rcc/intel/openmpi/lib64). Because the Makefile imports environment variables, the linker mistakenly reads this raw path as a file, causing a ld: read in flex scanner failed error. We must unset it.
+```bash
+unset MPI_LIB
+```
+Finally, execute the compilation script and log the output:
+```bash
 ./compile 2>&1 | tee compile_wps.log
 ```
-In the build directory configure WPS
-```
-./configure
-```
-
-
-
-
-
-
-
-The initial step is to produce the initial and boundary conditions by running the WPS components (`ungrib.exe`, `geogrid.exe`, and `metgrid.exe`). These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.
-## Source and Documentation
-* NCAR WPS GitHub Repository: https://github.com/wrf-model/WPS
-## Download and Compile WPS
-Clone the repository into the created directory:
+Check for `geogrid.exe`, `metgrid.exe` and `ungrib.exe`.
 ```bash
-cd models/
-git clone https://github.com/wrf-model/WPS WPS
+ls -ls *.exe
 ```
-Load the required modules and set environment variables:
-```bash
-module purge
-module load intel/21
-```
-Export dependent libraries
-```
-export NETCDF=/gpfs/home/junkyung_ucar_edu/WPSV4.5/NETCDF
-export JASPERLIB=/usr/lib64
-export JASPERINC=/usr/include/jasper
-```
-Navigate into the WPS directory and configure:
-```bash
-cd WPS
-./configure
-```
-You should see the file `configure.wps`.
-Select:
-```text
-17. Linux x86_64, Intel compiler (serial)
-```
-
-
-Compile WPS:
-```bash
-./compile >& compile.log
-ls -ls main/*.exe
-```
-After successful compilation, the following executables should be present:
-```text
-geogrid.exe
-ungrib.exe
-metgrid.exe
-```
----
-
 
 # Building the Data Assimilation Research Testbed (DART)
 **Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
