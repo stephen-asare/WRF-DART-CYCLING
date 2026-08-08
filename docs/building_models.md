@@ -81,13 +81,10 @@ For more on compiling WRF, refer to the official documentation [WRF Compilation 
 ---
 
 
-# Building WRF Data Assimilation (WRFDA)
-## Purpose
-WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, WRFDA's `randomcv` utility is used to create randomly perturbed ensemble members.
-## Source and Documentation
-WRFDA is distributed as part of the WRF repository:
-* NCAR WRF GitHub Repository: https://github.com/wrf-model/WRF
-## Download and Compile WRFDA
+### Building WRF Data Assimilation (WRFDA)
+WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, we intend to use WRFDA's `randomcv` utility to create randomly perturbed ensemble members. WRFDA is distributed as part of the WRF repository: NCAR WRF GitHub Repository: [WRF-ARW](https://github.com/wrf-model/WRF)
+
+Download and Compile WRFDA
 Clone the repository:
 ```bash
 cd $MODEL_DIR
