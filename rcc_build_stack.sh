@@ -23,8 +23,8 @@ module load netcdf/4.7.0
 
 echo "Setting installation paths"
 echo ""
-export MODEL_DIR="/gpfs/home/sa24m/stephen_asare/models"     #set this when appropriately.
-export PREFIX=$MODEL_DIR/NETCDF
+export SOFTWARE_DIR="/gpfs/home/sa24m/stephen_asare/models"     #set this when appropriately.
+export PREFIX=$SOFTWARE_DIR/NETCDF
 export PATH=$PREFIX/bin:$PATH
 export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 export CPPFLAGS="-I$PREFIX/include"
@@ -38,12 +38,12 @@ export FC=mpifort
 export F77=mpifort
 
 # Create build workspace
-mkdir -p $MODEL_DIR/NETCDF
-mkdir -p $MODEL_DIR/builds
+mkdir -p $SOFTWARE_DIR/NETCDF
+mkdir -p $SOFTWARE_DIR/builds
 echo "NETCDF Path: $PREFIX"
-echo "Build Path: $MODEL_DIR/builds"
+echo "Build Path: $SOFTWARE_DIR/builds"
 
-cd $MODEL_DIR/builds
+cd $SOFTWARE_DIR/builds
 
 # ==============================================================================
 # PNETCDF (v1.15.0) 

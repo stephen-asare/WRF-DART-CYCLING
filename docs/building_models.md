@@ -1,9 +1,9 @@
-# Building the Models
+# Building the Software
 This section provides step-by-step instructions for downloading the source code, loading the necessary environment modules, and compiling the atmospheric models required for the experiment.
 
 ### Build custom libraries
 First we need to build custom PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS libraries using RCC system Intel/25, OpenMPI 4.1.0, HDF5 and NetCDF. \
-Open `rcc_build_stack.sh`, and configure directory for models `MODEL_DIR` (where you want the models to be installed). The script `rcc_build_stack.sh` will create the model directory and build the custom libraries.
+Open `rcc_build_stack.sh`, and configure directory for software `SOFTWARE_DIR` (where you want the models to be installed). The script `rcc_build_stack.sh` will create the model directory and build the custom libraries.
 Run `rcc_build_stack.sh` to build custom libraries.
 ```bash
 nohup ./rcc_build_stack.sh >& compile.log &
@@ -13,9 +13,9 @@ Verify the log file to ensure the libraries successfully completed.
 ---
 
 ### Building the Weather Research and Forecasting (WRF) Model
-Obtain the WRF-ARW v4.6.1 source code, initialize submodules in the cloning process to ensure all internal dependencies are downloaded. Model directory should be created already from compiling the custom libraries above, simply change directory to that directory. If you already libraries, PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS without using `rcc_build_stack.sh` above, simply create a directory $MODEL_DIR where all the models will be compiled.
+Obtain the WRF-ARW v4.6.1 source code, initialize submodules in the cloning process to ensure all internal dependencies are downloaded. Model directory should be created already from compiling the custom libraries above, simply change directory to that directory. If you already libraries, PnetCDF, FFTW3, ARPACK-NG, ParMETIS and LAMMPS without using `rcc_build_stack.sh` above, simply create a directory $SOFTWARE_DIR where all the models will be compiled.
 ```bash
-cd $MODEL_DIR
+cd $SOFTWARE_DIR
 mkdir WRF
 git clone --branch v4.6.1 --recurse-submodules https://github.com/wrf-model/WRF.git WRF/v4.6.1
 cd WRF/v4.6.1
@@ -61,7 +61,7 @@ This build of WRF will use NETCDF4 with HDF5 compression
 ```
 Compile the em_real dynamical core
 ```bash
-./compile em_real 2>&1 | tee compile.log
+./compile em_real 2>&1 | tee compile.log &
 ```
 This may take a while, when compilation completes, check the main/ directory for the four required executables.
 ```bash
@@ -84,7 +84,7 @@ WRFDA is a critical component of the data assimilation workflow. Using the initi
 Download and Compile WRFDA \
 Clone the repository:
 ```bash
-cd $MODEL_DIR
+cd $SOFTWARE_DIR
 mkdir WRFDA
 git clone --branch v4.6.1 --recurse-submodules https://github.com/wrf-model/WRF.git WRFDA/v4.6.1
 cd WRFDA/v4.6.1
@@ -122,20 +122,24 @@ Enter **78** ((dmpar) INTEL (ifx/icx) : oneAPI LLVM) for Compiler Selection and 
 ```
 Compile WRFDA:
 ```bash
-./compile all_wrfvar >& compile.out
+./compile all_wrfvar >& compile.out &
+```
+After successful compilation, the WRFDA executables we need will be available list them below
+```bash
 ls -ls var/build/*.exe
 ```
-After successful compilation, the WRFDA executables will be available in:
+Check that the following executables are available:
 ```text
-var/build/
+da_advance_time.exe
+da_wrfvar.exe
 ```
 ---
 
 ### Building the WRF Preprocessing System (WPS)
 WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment. \
-Clone WPS into the $MODEL_DIR directory.
+Clone WPS into the $SOFTWARE_DIR directory.
 ```bash
-cd $MODEL_DIR
+cd $SOFTWARE_DIR
 mkdir WPS && cd WPS
 git clone --branch v4.7.0 --single-branch https://github.com/wrf-model/WPS.git v4.7.0
 cd v4.7.0
@@ -212,7 +216,7 @@ ls -ls *.exe
 **Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
 **Source & Documentation:** [NCAR DART GitHub Repository](https://github.com/NCAR/DART) | [DART Documentation](https://docs.dart.ucar.edu/)
 ```bash
-cd $MODEL_DIR
+cd $SOFTWARE_DIR
 mkdir DART && cd DART
 ```
 Clone the repository:
@@ -249,21 +253,21 @@ LIBS = -L$(NETCDF)/lib64 -lnetcdff -lnetcdf
 ```
 Build DART:
 ```bash
-cd $MODEL_DIR/DART/v11.21.2/models/wrf/work
+cd $SOFTWARE_DIR/DART/v11.21.2/models/wrf/work
 ./quickbuild.csh
 ```
 Once finished, this should create `filter`, `advance_time`, `obs_sequence_tool`, `update_wrf_bc`, `obs_seq_to_netcdf`, `pert_wrf_bc` `obs_diag` and `create_obs_sequence` in the directory.
 
 Now we want to build other DART tools we will require for the experiments `create_real_obs`, `cword.x`, `grabbufr.x`, `prepbufr_03Z.x` and `prepbufr.x`
 ```bash
-cd "$MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/work/"
+cd "$SOFTWARE_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/work/"
 ./quickbuild.sh
 ls
 ```
 You should see create `create_real_obs` and `prepbufr_to_obs` in the directory. \
 Lastly, we build the observation pre-processing tools for bufr files
 ```bash
-cd $MODEL_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
+cd $SOFTWARE_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
 ```
 Replace `icc` and `ifort`with icx and ifx along with flags.
 ```bash
