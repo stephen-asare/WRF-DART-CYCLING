@@ -116,11 +116,10 @@ Navigate into the WRFDA directory and configure:
 ```bash
 ./configure wrfda
 ```
-You should see the file `configure.wrf`.
-```text
-Enter **78** ((dmpar) INTEL (ifx/icx) : oneAPI LLVM) for Compiler Selection and **1** (basic) for Nesting Selection.\
-Specifically search for the SCC, CCOMP, and DM_CC compiler definitions in configure.wrf and append the bypass flags to them.
-```
+You should see the file `configure.wrf`. \
+Enter **78** ((`dmpar`) `INTEL` (`ifx/icx`) : `oneAPI LLVM`) for Compiler Selection and **1** (basic) for Nesting Selection.\
+Specifically search for the `SCC`, `CCOMP`, and `DM_CC` compiler definitions in configure.wrf and append the bypass flags to them.
+```bash
 sed -i '/^SCC/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^CCOMP/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^DM_CC/ s/mpicc/mpicc -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
