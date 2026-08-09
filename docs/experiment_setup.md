@@ -117,8 +117,8 @@ To eliminate script modification during execution, forecast routines are decoupl
 * **`ensemble_fcst_full.sh`**
   Executes long-range free forecasts (e.g., 50-hour runs) across all ensemble members using centralized long-job SLURM settings. Used to generate the free-run ensemble and establish the Nature Run (truth state) for synthetic observation generation.
 
-* **`ensemble_fcst_3h.sh`**
-  Executes short-range (e.g., 3-hour) forecasts across ensemble members using dedicated spin-up SLURM queue parameters. Used to advance initial state members to the starting timestamp of the cycling period.
+* **`ensemble_fcst_6h.sh`**
+  Executes short-range (e.g., 6-hour) forecasts across ensemble members using dedicated spin-up SLURM queue parameters. Used to advance initial state members to the starting timestamp of the cycling period.
 
 * **`run_cycle.sh`**
   The primary data assimilation cycling driver. Managing the iterative EAKF assimilation loop, it automates:
@@ -155,7 +155,7 @@ gen_init.sh (Consolidated WRFDA randomcv IC & Update LBC Perturbation Engine)
            └──→ make_obs.sh (Dynamic DART observation sequence conversion)
    ↓
 [Data Assimilation Cycling]
-   ├──→ ensemble_fcst_3h.sh (Initial Short-Range Spin-Up Forecast)
+   ├──→ ensemble_fcst_6h.sh (Initial Short-Range Spin-Up Forecast)
    │       └──→ advance_run.sh [passed duration argument dynamically]
    │
    └──→ run_cycle.sh (Iterative EAKF Assimilation Cycling Engine)
