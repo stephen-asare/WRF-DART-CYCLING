@@ -120,12 +120,10 @@ You should see the file `configure.wrf`.
 ```text
 Enter **78** ((dmpar) INTEL (ifx/icx) : oneAPI LLVM) for Compiler Selection and **1** (basic) for Nesting Selection.\
 Specifically search for the SCC, CCOMP, and DM_CC compiler definitions in configure.wrf and append the bypass flags to them.
-
 ```
 sed -i '/^SCC/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^CCOMP/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^DM_CC/ s/mpicc/mpicc -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
-```
 ```
 Compile WRFDA:
 ```bash
@@ -141,6 +139,13 @@ da_advance_time.exe
 da_wrfvar.exe
 da_update_bc
 ```
+**NB** If you do not see `da_update_bc`, yet `da_advance_time.exe` and `da_wrfvar.exe` is available, do not need to clean the build, just patch the file the NetCDF libraries directly into `LIB_EXTERNAL` in the config file and Fire off the compilation again.
+```
+sed -i 's|-lwrfio_nf|-lwrfio_nf -L/opt/rcc/intel/openmpi/lib64 -lnetcdff -lnetcdf|g' configure.wrf
+./compile all_wrfvar >& compile.out &
+```
+Once the compilations complete, run `ls -l var/build/*.exe` again, `da_update_bc.exe` and the remaining `gen_be` tools will successfully generate alongside `da_wrfvar.exe`
+
 ---
 
 ### Building the WRF Preprocessing System (WPS)
