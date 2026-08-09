@@ -32,25 +32,28 @@ The simulation relies on the following parameterization schemes across both doma
 
 ---
 
-## Data Assimilation (DART) Setup
+### Data Assimilation (DART) Setup
 
 The assimilation cycle employs an either Ensemble Adjustment Kalman Filter (EAKF) or Kernel Density Filter (KDE) driven by DART, interacting with the WRF state. 
 
 *   **Ensemble Size:** 50 members
 *   **Assimilation Interval:** 3 hours for standard state variables
-*   **Radar Assimilation Frequency:** 15 minutes
-*   **Inflation:** Adaptive inflation is enabled (`ADAPTIVE_INFLATION=1`)
+*   **Inflation:** Adaptive inflation is enabled (`ADAPTIVE_INFLATION=2`)
 *   **Initial Perturbation Scale:** 0.25 
 *   **Assimilated Variables for spin up cycle:** `U`, `V`, `PH`, `THM`, `MU`, `QVAPOR`, `QCLOUD`, `QRAIN`, `QICE`, `QSNOW`, `QGRAUP`, `QNICE`, `QNRAIN`, `U10`, `V10`, `T2`, `Q2`, `PSFC`
 *   **Assimilated Variables for target cycyle:** `U`, `V`, `THM`, `QVAPOR`
 
 ---
 
-## Repository Scripts & Architecture
+### Repository Scripts & Architecture
 
 This repository implements a completely centralized, modernized WRF-DART ensemble data assimilation pipeline. All configuration parameters, scheduler resource allocations, and module environments are driven by a single master parameter file, eliminating redundant scripts and fragile hardcoded replacements.
 
 Below is a summary of the major scripts and their roles within the newly modularized workflow.
+
+### Custom libraries build
+* **rcc_build_stack.sh**
+  A compilation script to build custom libraries required for the individual software for the experiment. The script creates and build PnetCDF, FFTW3, ARPACK-NG, ParMETIS, LAMMPS using RCC Intel 25, OpenMPI 4.1.0, hdf5/1.10.4 and netcdf/4.7.0 module.
 
 ### Core Configuration & Environment
 
