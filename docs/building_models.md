@@ -20,7 +20,7 @@ mkdir WRF
 git clone --branch v4.6.1 --recurse-submodules https://github.com/wrf-model/WRF.git WRF/v4.6.1
 cd WRF/v4.6.1
 ```
-Now we configure and compile WRF-ARW v4.6.1 on the FSU RCC HPC environment using the Intel 25 toolchain (ifx/icx), OpenMPI, system NetCDF/HDF5 modules, and the custom PNetCDF installation we just built.\\
+Now we configure and compile WRF-ARW v4.6.1 on the FSU RCC HPC environment using the Intel 25 toolchain (ifx/icx), OpenMPI, system NetCDF/HDF5 modules, and the custom PNetCDF installation we just built.\
 To start, clear active environment modules and load the required compiler, MPI, and library modules.
 ```bash
 module purge
@@ -80,8 +80,8 @@ For more on compiling WRF, refer to the official documentation [WRF Compilation 
 
 
 ### Building WRF Data Assimilation (WRFDA)
-WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, we intend to use WRFDA's `randomcv` utility to create randomly perturbed ensemble members. WRFDA is distributed as part of the WRF repository: NCAR WRF GitHub Repository: [WRF-ARW](https://github.com/wrf-model/WRF). \
-Download and Compile WRFDA \
+WRFDA is a critical component of the data assimilation workflow. Using the initial and boundary condition files generated for the experiment start time, we intend to use WRFDA's `randomcv` utility to create randomly perturbed ensemble members. WRFDA is distributed as part of the WRF repository: NCAR WRF GitHub Repository: [WRF-ARW](https://github.com/wrf-model/WRF).\
+Download and Compile WRFDA\
 Clone the repository:
 ```bash
 cd $SOFTWARE_DIR
@@ -116,7 +116,7 @@ Navigate into the WRFDA directory and configure:
 ```bash
 ./configure wrfda
 ```
-You should see the file `configure.wrf`. \
+You should see the file `configure.wrf`.\
 Enter **78** ((`dmpar`) `INTEL` (`ifx/icx`) : `oneAPI LLVM`) for Compiler Selection and **1** (basic) for Nesting Selection.\
 Specifically search for the `SCC`, `CCOMP`, and `DM_CC` compiler definitions in configure.wrf and append the bypass flags to them.
 ```bash
@@ -148,7 +148,7 @@ Once the compilations complete, run `ls -l var/build/*.exe` again, `da_update_bc
 ---
 
 ### Building the WRF Preprocessing System (WPS)
-WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment. \
+WPS components `ungrib.exe`, `geogrid.exe`, and `metgrid.exe` are required to produce the initial and boundary conditions. These programs generate the meteorological files required to create the `wrfinput` and `wrfbdy` files initialized at the start date of the experiment.\
 Clone WPS into the $SOFTWARE_DIR directory.
 ```bash
 cd $SOFTWARE_DIR
@@ -164,12 +164,12 @@ This should display
 ```text
 v4.7.0
 ```
-Load the Environment Modules. \
+Load the Environment Modules.\
 Load the required compiler, MPI, and dependency modules for the build environment:
 ```bash
 module load intel/25 openmpi/4.1.0 hdf5/1.10.4 netcdf/4.7.0
 ```
-Export Dependent Libraries. \
+Export Dependent Libraries.\
 Set the environment variables so the configuration script knows where to look for NetCDF, HDF5, and compression libraries, and specify the new Intel LLVM compiler wrappers (ifx/icx):
 ```bash
 export NETCDF=/opt/rcc/intel/openmpi
@@ -181,7 +181,7 @@ export OMPI_FC=ifx
 export OMPI_CC=icx
 export OMPI_CXX=icpx
 ```
-Clean the Environment and Patch the Configuration Defaults. \
+Clean the Environment and Patch the Configuration Defaults.\
 Ensure the workspace is clean. NB: WPS does not have a built-in option for the newer ifx/icx compilers, so we must change the compilers in WPS's "blueprint" file to replace the old mpicx wrappers with mpicc before running the configuration script.
 ```bash
 ./clean -a
@@ -194,7 +194,7 @@ Run the configuration script to generate configure.wps:
 ```
 Choose **19**, Linux x86_64, Intel compiler (dmpar) Note: Option **19** natively hardcodes the older Intel compilers (ifort and icc). However, the Intel/25 module completely dropped those older compilers in favor of the newer oneAPI LLVM compilers (ifx and icx).
 
-Patch Compiler Warnings and Linker Paths \
+Patch Compiler Warnings and Linker Paths\
 Because we are using newer LLVM compilers, several strict C standards and library structures need to be patched in the generated configure.wps file.
 Suppress strict C compiler errors that would otherwise halt the compilation of older WPS C-routines:
 ```bash
@@ -210,7 +210,7 @@ Explicitly link the NetCDF-Fortran (-lnetcdff) library, as well as its underlyin
 ```bash
 sed -i 's|-lnetcdf|-lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lm -lz|g' configure.wps
 ```
-Prevent Environment Interference and Compile.  \
+Prevent Environment Interference and Compile.\
 The openmpi module exports an environment variable named MPI_LIB as a raw directory path (/opt/rcc/intel/openmpi/lib64). Because the Makefile imports environment variables, the linker mistakenly reads this raw path as a file, causing a ld: read in flex scanner failed error. We must unset it.
 ```bash
 unset MPI_LIB
@@ -246,13 +246,13 @@ module load mvapich/2.3.7
 module load matlab/2022b
 module load python/3
 ```
-Change directory to `build_templates`. \
+Change directory to `build_templates`.\
 Copy the ifx template to the default name DART looks for:
 ```Bash
 cp mkmf.template.ifx.linux mkmf.template
 ```
-Now Update the Makefile Template. \
-Use you favorite editor to open the `mkmf.template` file. Update the NetCDF paths in the mkmf.template file specific to RCC system. \
+Now Update the Makefile Template.\
+Use you favorite editor to open the `mkmf.template` file. Update the NetCDF paths in the mkmf.template file specific to RCC system.\
 Change from:
 ```bash
 # NETCDF = /opt/local
@@ -276,7 +276,7 @@ cd "$SOFTWARE_DIR/DART/v11.21.2/observations/obs_converters/NCEP/ascii_to_obs/wo
 ./quickbuild.sh
 ls
 ```
-You should see create `create_real_obs` and `prepbufr_to_obs` in the directory. \
+You should see create `create_real_obs` and `prepbufr_to_obs` in the directory.\
 Lastly, we build the observation pre-processing tools for bufr files
 ```bash
 cd $SOFTWARE_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
