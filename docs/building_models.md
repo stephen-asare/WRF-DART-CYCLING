@@ -225,7 +225,7 @@ ls -ls *.exe
 ```
 
 ### Building the Data Assimilation Research Testbed (DART)
-**Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.
+**Purpose:** DART is the primary ensemble data assimilation system used to assimilate observations (such as radar or water vapor profiles) into the WRF model state. It interfaces directly with WRF to update the state variables using ensemble Kalman filter techniques.\
 **Source & Documentation:** [NCAR DART GitHub Repository](https://github.com/NCAR/DART) | [DART Documentation](https://docs.dart.ucar.edu/)
 ```bash
 cd $SOFTWARE_DIR
