@@ -325,7 +325,8 @@ def process_file(obs_filepath):
     file_year  = int(date_str[0:4])
     file_month = int(date_str[4:6])
     file_day   = int(date_str[6:8])
-    file_ref_time = datetime(file_year, file_month, file_day, 0, 0, 0)
+    file_hour  = int(date_str[8:10])
+    # file_ref_time = datetime(file_year, file_month, file_day, 0, 0, 0) #debugging
 
     wrf_cache  = {}
     grid_cache = {}
@@ -368,7 +369,9 @@ def process_file(obs_filepath):
                 continue
 
             # obs_dt   = hour_to_datetime(hour_val)
-            obs_dt   = file_ref_time + timedelta(hours=hour_val)
+            # obs_dt   = file_ref_time + timedelta(hours=hour_val)
+            # Extract the exact time from the filename string instead of adding the hour offset
+            obs_dt = datetime(file_year, file_month, file_day, file_hour, 0, 0)
             wrf_path = find_wrf_file(obs_dt)
             if wrf_path is None:
                 n_no_wrf += 1

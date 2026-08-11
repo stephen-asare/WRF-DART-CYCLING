@@ -66,7 +66,10 @@ def generate_files():
 
     while current_time <= END_DATE:
         date_str = current_time.strftime("%Y%m%d%H")
-        hour_offset = (current_time - REF_TIME).total_seconds() / 3600.0
+        # hour_offset = (current_time - REF_TIME).total_seconds() / 3600.0  #debug
+        # Calculate offset from midnight of the CURRENT day, not the global REF_TIME
+        day_start = current_time.replace(hour=0, minute=0, second=0, microsecond=0)
+        hour_offset = (current_time - day_start).total_seconds() / 3600.0
         
         # Buffer to hold lines for each subset (e.g., "ADPSFC": [line1, line2], "ADPUPA": [line1, line2])
         subset_buffers = {}
