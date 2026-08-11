@@ -6,7 +6,6 @@
 #SBATCH -t 1:55:00
 #SBATCH --partition=backfill2
 #SBATCH --constraint="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
-#SBATCH --mem-per-cpu=4000M
 #SBATCH --output=wrf_run_%j.log
 #SBATCH --export=ALL
 
@@ -155,7 +154,7 @@ cat > namelist.input << EOF
  &grib2
  /
  &namelist_quilt
- nio_tasks_per_group = 0,
+ nio_tasks_per_group = 2,
  nio_groups = 1,
  /
  &dfi_control

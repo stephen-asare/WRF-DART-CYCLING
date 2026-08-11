@@ -7,7 +7,7 @@ source /gpfs/research/software/python/anaconda38/etc/profile.d/conda.sh
 conda activate ncar_env
 source /etc/profile 
 module purge 
-module load intel/21 openmpi/4.1.0 hdf5/1.10.4 netcdf/4.7.0 python/3 
+module load intel/25 openmpi/4.1.0 hdf5/1.10.4 netcdf/4.7.0 python/3 
 
 
 
@@ -15,10 +15,10 @@ RUN_CMD="srun --partition=chipilskigroup_q"   # set this appropriately #%%%#
 
 # models directory
 MODEL_DIR=/gpfs/research/chipilskigroup/stephen_asare/models   # set this appropriately #%%%#
-WRFDA_DIR=$MODEL_DIR/WRFDA/V4.5.2
+WRFDA_DIR=$MODEL_DIR/WRFDA/v4.6.1
 BUILD_DIR=$WRFDA_DIR/var/build
-WRF_DIR=$MODEL_DIR/WRF/V4.6.1
-WPS_DIR=$MODEL_DIR/WPS/V4.5
+WRF_DIR=$MODEL_DIR/WRF/v4.6.1
+WPS_DIR=$MODEL_DIR/WPS/v4.7.0
 DART_DIR=$MODEL_DIR/DART/v11.21.2
 
 # scripts directorys
@@ -221,7 +221,7 @@ export CYCLE_FCST_SBATCH_PARTITION="backfill2"
 export CYCLE_FCST_SBATCH_NODES=5
 export CYCLE_FCST_SBATCH_TASKS=30
 export CYCLE_FCST_SBATCH_TIME="01:30:00"
-export CYCLE_FCST_SBATCH_MEM="8000M"
+export CYCLE_FCST_SBATCH_MEM="20GB"
 export CYCLE_FCST_SBATCH_CONSTRAINT="intel,YEAR2015|intel,YEAR2017|intel,YEAR2018|intel,YEAR2019"
 
 # 5. DART Filter Job Settings 
