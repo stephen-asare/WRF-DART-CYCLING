@@ -283,7 +283,7 @@ cd $SOFTWARE_DIR/DART/v11.21.2/observations/obs_converters/NCEP/prep_bufr/
 ```
 Replace `icc` and `ifort`with icx and ifx along with flags.
 ```bash
-sed -i 's/cc=icx/cc="icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion"/g' install.sh
+sed -i 's/cc=icc/cc="icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion"/g' install.sh
 sed -i 's/ff=ifort/ff=ifx/g' install.sh
 ```
 Execute installation.
