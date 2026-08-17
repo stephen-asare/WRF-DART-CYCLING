@@ -322,6 +322,7 @@ wget https://github.com/dtcenter/MET/archive/refs/tags/v12.1.1.tar.gz
 ```
 Create Environmental variable description
 ```
+cd ../
 touch install_met_env.rcc
 ```
 Copy everything below and paste in newly created file and save.
