@@ -101,7 +101,7 @@ Set the environment variables:
 ```bash
 export NETCDF=/opt/rcc/intel/openmpi
 export HDF5=/opt/rcc/intel/hdf5-1.10.4
-export PNETCDF=../../NETCDF
+export PNETCDF=/gpfs/home/sa24m/stephen_asare/models/NETCDF
 export NETCDF4=1
 export WRFIO_NETCDF4_FILE_SUPPORT=1
 export WRFIO_NCD_LARGE_FILE_SUPPORT=1
