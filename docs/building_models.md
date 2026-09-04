@@ -125,6 +125,7 @@ Specifically search for the `SCC`, `CCOMP`, and `DM_CC` compiler definitions in 
 sed -i '/^SCC/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^CCOMP/ s/icx/icx -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
 sed -i '/^DM_CC/ s/mpicc/mpicc -Wno-implicit-function-declaration -Wno-implicit-int -Wno-incompatible-pointer-types -Wno-int-conversion/' configure.wrf
+sed -i 's|-L/opt/rcc/intel/hdf5-1.10.4/lib |-L/opt/rcc/intel/hdf5-1.10.4/lib64 |g' configure.wrf
 ```
 Compile WRFDA:
 ```bash
