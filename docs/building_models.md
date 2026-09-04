@@ -25,9 +25,8 @@ To start, clear active environment modules and load the required compiler, MPI, 
 ```bash
 module purge
 module load intel/25
-module load openmpi/4.1.0
+module load openmpi/4.1.6
 module load hdf5/1.10.4
-module load netcdf/4.7.0
 ```
 Next, we Export the exact paths for NetCDF, HDF5, and the custom PNetCDF installation along with required feature flags and stack parameters.
 ```bash
