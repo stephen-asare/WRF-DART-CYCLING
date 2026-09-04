@@ -30,18 +30,20 @@ module load hdf5/1.10.4
 ```
 Next, we Export the exact paths for NetCDF, HDF5, and the custom PNetCDF installation along with required feature flags and stack parameters.
 ```bash
-export NETCDF=/opt/rcc/intel/openmpi
+export SOFTWARE_DIR="/gpfs/home/sa24m/stephen_asare/models"
+export NETCDF=$SOFTWARE_DIR/NETCDF
+export PNETCDF=$SOFTWARE_DIR/NETCDF
 export HDF5=/opt/rcc/intel/hdf5-1.10.4
-export PNETCDF=/gpfs/home/sa24m/stephen_asare/models_new/NETCDF
 export NETCDF4=1
 export WRFIO_NETCDF4_FILE_SUPPORT=1
 export WRFIO_NCD_LARGE_FILE_SUPPORT=1
 export WRF_EM_CORE=1
 export WRF_DA_CORE=0
 export MP_STACK_SIZE=64000000
-export CPPFLAGS="-I$NETCDF/include -I$HDF5/include -I$PNETCDF/include $CPPFLAGS"
-export LDFLAGS="-L$NETCDF/lib64 -L$HDF5/lib64 -L$PNETCDF/lib $LDFLAGS"
-export LD_LIBRARY_PATH=$NETCDF/lib64:$HDF5/lib64:$PNETCDF/lib:$LD_LIBRARY_PATH
+export PATH=$NETCDF/bin:$PATH
+export CPPFLAGS="-I$NETCDF/include -I$HDF5/include $CPPFLAGS"
+export LDFLAGS="-L$NETCDF/lib -L$NETCDF/lib64 -L$HDF5/lib64 $LDFLAGS"
+export LD_LIBRARY_PATH=$NETCDF/lib:$NETCDF/lib64:$HDF5/lib64:$LD_LIBRARY_PATH
 ```
 To ensure a clean build slate run
 ```bash
